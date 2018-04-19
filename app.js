@@ -12,7 +12,6 @@ const http = require('http'),
   dotenv = require('dotenv').config(),
   mongoose = require('mongoose');
 
-
 const isProduction = process.env.NODE_ENV === 'production';
 
 // Create global app object
@@ -35,21 +34,24 @@ if (!isProduction) {
 }
 
 // Mongo connection
-// mongoose.connect(process.env.MONGODB_URI);
-// if (isProduction) {
-// } else {
-//   mongoose.set('debug', true);
-// }
+mongoose.connect(process.env.MONGODB_URI);
+if (!isProduction)
+  mongoose.set('debug', true);
 
 // Model
-// require('./models/User');
-// require('./models/Article');
-// require('./models/Comment');
-// require('./config/passport');
+require('./models/Card');
 
-app.get('/', function (req, res) {
-  res.send('test');
+
+
+const Card = mongoose.model('Card');
+
+app.get('/api/cards', async (req, res) => {
+  const cards = await Card.find();
+  res.status(200).json(cards);
 });
+
+
+
 
 app.use(require('./routes'));
 
@@ -70,12 +72,21 @@ if (!isProduction) {
 
     res.status(err.status || 500);
 
+    // ideal error response
+    // res.json({
+    //   code: "1234",
+    //   message: err.message,
+    //   description: "bla bla about code 1234",
+    //   documentationUrl: "http://urltodoc.com",
+    // });
+
     res.json({
       'errors': {
         message: err.message,
         error: err
       }
     });
+
   });
 }
 
