@@ -1,16 +1,15 @@
-const http = require('http'),
-  path = require('path'),
-  methods = require('methods'),
-  methodOverride = require('method-override');
-  logger = require('morgan'),
-  express = require('express'),
-  bodyParser = require('body-parser'),
-  session = require('express-session'),
-  cors = require('cors'),
-  passport = require('passport'),
-  errorhandler = require('errorhandler'),
-  dotenv = require('dotenv').config(),
-  mongoose = require('mongoose');
+const methodOverride = require('method-override');
+const logger = require('morgan');
+const express = require('express');
+const bodyParser = require('body-parser');
+const session = require('express-session');
+const cors = require('cors');
+const passport = require('passport');
+const errorhandler = require('errorhandler');
+const mongoose = require('mongoose');
+require('dotenv').config();
+// async function wrapper for handling error without surrounding every await with a try/catch. Reference article: https://medium.com/@Abazhenov/using-async-await-in-express-with-node-8-b8af872c0016
+require('express-async-errors');
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -33,7 +32,7 @@ if (!isProduction) {
   app.use(errorhandler());
 }
 
-// Mongo connection
+// Mongoose connection
 mongoose.connect(process.env.MONGODB_URI);
 if (!isProduction)
   mongoose.set('debug', true);
@@ -41,68 +40,55 @@ if (!isProduction)
 // Model
 require('./models/Card');
 
-
-
-const Card = mongoose.model('Card');
-
-app.get('/api/cards', async (req, res) => {
-  const cards = await Card.find();
-  res.status(200).json(cards);
-});
-
-
-
-
+// Routes
 app.use(require('./routes'));
 
 /// catch 404 and forward to error handler
 app.use((req, res, next) => {
-  const err = new Error('Not Found');
-  err.status = 404;
-  next(err);
+  const error = new Error('Not Found');
+  error.status = 404;
+  next(error);
 });
 
 /// error handlers
 
+// // ideal error response
+// res.json({
+//   code: '1234' or 'CamalCaseString',
+//   message: error.message,
+//   description: "bla bla about code 1234",
+//   documentationUrl: "http://urltodoc.com",
+// });
+
 // development error handler
 // will print stacktrace
 if (!isProduction) {
-  app.use((err, req, res, next) => {
-    console.log(err.stack);
+  app.use((error, req, res) => {
+    console.log(error.stack);
 
-    res.status(err.status || 500);
-
-    // ideal error response
-    // res.json({
-    //   code: "1234",
-    //   message: err.message,
-    //   description: "bla bla about code 1234",
-    //   documentationUrl: "http://urltodoc.com",
-    // });
-
+    res.status(error.status || 500);
     res.json({
-      'errors': {
-        message: err.message,
-        error: err
-      }
+      code: error.name,
+      message: error.message,
+      error: error,
     });
-
   });
 }
 
 // production error handler
 // no stacktraces leaked to user
-app.use((err, req, res, next) => {
-  res.status(err.status || 500);
+app.use((error, req, res) => {
+  res.status(error.status || 500);
+
   res.json({
-    'errors': {
-      message: err.message,
-      error: {}
-    }
+    code: error.name,
+    message: error.message,
+    error: {},
   });
+
 });
 
 // finally, let's start our server...
-const server = app.listen(process.env.PORT || 4000, function () {
+const server = app.listen(process.env.PORT || 4000, () => {
   console.log('Listening on port ' + server.address().port);
 });
