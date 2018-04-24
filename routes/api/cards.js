@@ -32,6 +32,12 @@ router.get('/', async (req, res) => {
   res.status(200).json(cards);
 });
 
+router.get('/:id', async (req, res) => {
+  const id = req.params.id;
+  const card = await Card.findById(id);
+
+  res.status(200).json(card);
+});
 
 router.post('/', async (req, res) => {
   const { wisdom, attribute } = req.body;
