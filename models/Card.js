@@ -4,7 +4,7 @@
 const mongoose = require('mongoose');
 
 const CardSchema = new mongoose.Schema({
-  wisdom: String,
+  wisdom: { type: String, required: [true, "wisdom is required"] },
   attribute: String,
 }, { timestamps: true });
 
