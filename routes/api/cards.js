@@ -48,4 +48,17 @@ router.post('/', async (req, res) => {
 });
 
 
+router.patch('/:id', async (req, res) => {
+
+  const { wisdom, attribute } = req.body;
+  const id = req.params.id;
+
+  let card = await Card.findById(id);
+  card.wisdom = wisdom;
+  card.attribute = attribute;
+  card = await card.save();
+
+  res.status(200).json(card)
+});
+
 module.exports = router;
