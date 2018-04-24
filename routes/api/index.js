@@ -31,7 +31,7 @@ router.use(function (err, req, res, next) {
   // handle MongoDB validation errors
     // not tested, potential bug on instanceof MongooseError
   if (err.name === 'ValidationError' && err instanceof MongooseError) {
-    return res.status(err.code || 422).json({
+    return res.status(err.status || 422).json({
       code: err.name,
       message: err.message,
       errors: Object.keys(err.errors).reduce((errors, key) => {
@@ -58,7 +58,6 @@ router.use(function (err, req, res, next) {
       errors: err.errors,
     });
   }
-
   return next(err);
 });
 

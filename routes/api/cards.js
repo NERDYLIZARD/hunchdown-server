@@ -4,6 +4,7 @@
 const router = require('express').Router();
 const mongoose = require('mongoose');
 const ValidationError = require('../../utils/ValidationError');
+const errors = require('@feathersjs/errors');
 const { getFullUrl, getPaginationLink } = require('../../utils/url');
 
 const Card = mongoose.model('Card');
@@ -48,7 +49,7 @@ router.post('/', async (req, res) => {
 });
 
 
-router.patch('/:id', async (req, res) => {
+router.patch('/:id', async (req, res, next) => {
 
   const { wisdom, attribute } = req.body;
   const id = req.params.id;
@@ -59,6 +60,13 @@ router.patch('/:id', async (req, res) => {
   card = await card.save();
 
   res.status(200).json(card)
+});
+
+router.delete('/:id', async (req, res, next) => {
+  const id = req.params.id;
+  const card = await Card.findById(id);
+  await card.remove();
+  res.sendStatus(204);
 });
 
 module.exports = router;

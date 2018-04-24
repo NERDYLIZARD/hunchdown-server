@@ -6,10 +6,11 @@ const session = require('express-session');
 const cors = require('cors');
 const passport = require('passport');
 const errorhandler = require('errorhandler');
+const errors = require('@feathersjs/errors');
 const mongoose = require('mongoose');
 require('dotenv').config();
 // async function wrapper for handling error without surrounding every await with a try/catch. Reference article: https://medium.com/@Abazhenov/using-async-await-in-express-with-node-8-b8af872c0016
-require('express-async-errors');
+// require('express-async-errors');
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -45,8 +46,7 @@ app.use(require('./routes'));
 
 /// catch 404 and forward to error handler
 app.use((req, res, next) => {
-  const error = new Error('Not Found');
-  error.status = 404;
+  const error = new errors.NotFound('Not Found');
   next(error);
 });
 
@@ -66,7 +66,9 @@ if (!isProduction) {
   app.use((error, req, res) => {
     console.log(error.stack);
 
-    res.status(error.status || 500);
+    // error.status for a standard error
+    // error.code for an error from @feather/error library
+    res.status(error.status || error.code || 500);
     res.json({
       code: error.name,
       message: error.message,
@@ -78,7 +80,10 @@ if (!isProduction) {
 // production error handler
 // no stacktraces leaked to user
 app.use((error, req, res) => {
-  res.status(error.status || 500);
+
+  // error.status for a standard error
+  // error.code for an error from @feather/error library
+  res.status(error.status || error.code || 500);
 
   res.json({
     code: error.name,
