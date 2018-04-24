@@ -4,7 +4,7 @@
 const router = require('express').Router();
 const mongoose = require('mongoose');
 const ValidationError = require('../../utils/ValidationError');
-const { getPaginationLink } = require('../../utils/url');
+const { getFullUrl, getPaginationLink } = require('../../utils/url');
 
 const Card = mongoose.model('Card');
 
@@ -30,5 +30,22 @@ router.get('/', async (req, res) => {
   res.set('X-Total-Pages', totalPages);
   res.status(200).json(cards);
 });
+
+
+router.post('/', async (req, res) => {
+  const { wisdom, attribute } = req.body;
+
+  let card = new Card({
+    wisdom,
+    attribute,
+  });
+  card = await card.save();
+
+  const location = `${getFullUrl(req)}/${card._id}`;
+
+  res.set('Location', location);
+  res.status(201).json(card);
+});
+
 
 module.exports = router;

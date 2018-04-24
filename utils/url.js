@@ -3,6 +3,7 @@
  */
 const url = require('url');
 
+// example output: "http://localhost:4000/api/cards"
 function getFullUrl(req) {
   return url.format({
     protocol: req.protocol,
@@ -11,6 +12,8 @@ function getFullUrl(req) {
   });
 }
 
+// example output: "<http://localhost:4000/api/cards?page=1&perPage=10>; rel="first">,
+                // <http://localhost:4000/api/cards?page=1&perPage=10>; rel="last">"
 function getPaginationLink(req, page, perPage, totalPages) {
   const fullUrl = getFullUrl(req);
   const prevUrl = page === 1 ? null : fullUrl + `?page=${page - 1}&perPage=${perPage}`;
