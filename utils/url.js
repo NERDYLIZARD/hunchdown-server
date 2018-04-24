@@ -15,7 +15,7 @@ function getPaginationLink(req, page, perPage, totalPages) {
   const fullUrl = getFullUrl(req);
   const prevUrl = page === 1 ? null : fullUrl + `?page=${page - 1}&perPage=${perPage}`;
   const nextUrl = page === totalPages ? null : fullUrl + `?page=${page + 1}&perPage=${perPage}`;
-  const firstUrl = fullUrl;
+  const firstUrl = fullUrl + `?page=1&perPage=${perPage}`;
   const lastUrl = fullUrl + `?page=${totalPages}&perPage=${perPage}`;
 
   let paginationLink = '';
