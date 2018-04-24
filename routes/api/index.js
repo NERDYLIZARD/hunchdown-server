@@ -2,7 +2,6 @@
  * Created on 20-Apr-18.
  */
 const router = require('express').Router();
-// const { MongooseError } = require('mongodb');
 const MongooseError = require('mongoose').Error;
 const ValidationError = require('../../utils/ValidationError');
 

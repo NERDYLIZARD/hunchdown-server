@@ -4,35 +4,30 @@
 const router = require('express').Router();
 const mongoose = require('mongoose');
 const ValidationError = require('../../utils/ValidationError');
+const { getPaginationLink } = require('../../utils/url');
 
 const Card = mongoose.model('Card');
 
-// test validation error
-router.get('/validation', (req, res, next) => {
-  next(new ValidationError('Validation Error Message', [
-    ValidationError.createValidationError(
-      ValidationError.errorCodes.INVALID,
-      'invalid wisdom',
-      'wisdom',
-      'cards',
-    )
-  ]));
-});
-
-// test mongoose validation error
-router.post('/', async (req, res) => {
-  const card = new Card({
-    // validation error: wisdom is required
-    wisdom: '',
-    attribute: 'defg',
-  });
-  await card.save();
-  res.status(201).json(card);
-
-});
-
 router.get('/', async (req, res) => {
-  const cards = await Card.find();
+
+  const perPage = req.query.perPage ? req.query.perPage : 10;
+  const page = req.query.page ? req.query.page : 1;
+
+  // TODO: parallelize find() and count()
+  const cards = await Card.find()
+    .limit(Number(perPage))
+    .skip(Number(perPage * (page - 1)))
+    .exec();
+
+  const totalCards = await Card.count();
+  const totalPages = Math.ceil(totalCards / perPage);
+
+  // pagination link
+  const paginationLink = getPaginationLink(req, page, perPage, totalPages);
+
+  res.set('Link', paginationLink);
+  res.set('X-Current-Page', page);
+  res.set('X-Total-Pages', totalPages);
   res.status(200).json(cards);
 });
 
