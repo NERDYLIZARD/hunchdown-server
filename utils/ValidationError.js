@@ -7,7 +7,7 @@ const errorCodes = {
   MISSING: 'Missing',
   MISSING_FIELD: 'MissingField',
   INVALID: 'Invalid',
-  ALREADY_EXIST: 'AlreadyExists',
+  ALREADY_EXISTS: 'AlreadyExists',
 };
 
 class ValidationError extends FeathersError {

@@ -26,7 +26,7 @@ router.use('/cards', require('./cards'));
 //   ]
 // }
 
-router.use(function (err, req, res, next) {
+router.use((err, req, res, next) => {
 
   // handle MongoDB validation errors
     // not tested, potential bug on instanceof MongooseError
@@ -58,6 +58,7 @@ router.use(function (err, req, res, next) {
       errors: err.errors,
     });
   }
+
   return next(err);
 });
 

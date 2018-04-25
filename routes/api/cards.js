@@ -3,7 +3,6 @@
  */
 const router = require('express').Router();
 const mongoose = require('mongoose');
-const ValidationError = require('../../utils/ValidationError');
 const errors = require('@feathersjs/errors');
 const { getFullUrl, getPaginationLink } = require('../../utils/url');
 
@@ -32,9 +31,11 @@ router.get('/', async (req, res) => {
   res.status(200).json(cards);
 });
 
-router.get('/:id', async (req, res) => {
-  const id = req.params.id;
+router.get('/:card', async (req, res, next) => {
+  const id = req.params.card;
   const card = await Card.findById(id);
+
+  if (!card) return next(new errors.NotFound('The card is not found.'));
 
   res.status(200).json(card);
 });
@@ -55,24 +56,31 @@ router.post('/', async (req, res) => {
 });
 
 
-router.patch('/:id', async (req, res, next) => {
+router.patch('/:card', async (req, res, next) => {
 
   const { wisdom, attribute } = req.body;
-  const id = req.params.id;
+  const id = req.params.card;
 
   let card = await Card.findById(id);
+
+  if (!card) return next(new errors.NotFound('The card is not found.'));
+
   card.wisdom = wisdom;
   card.attribute = attribute;
   card = await card.save();
 
-  res.status(200).json(card)
+  res.status(200).json(card);
 });
 
-router.delete('/:id', async (req, res, next) => {
-  const id = req.params.id;
+router.delete('/:card', async (req, res, next) => {
+  const id = req.params.card;
   const card = await Card.findById(id);
+
+  if (!card) return next(new errors.NotFound('The card is not found.'));
+
   await card.remove();
   res.sendStatus(204);
 });
+
 
 module.exports = router;

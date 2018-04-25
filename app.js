@@ -10,7 +10,7 @@ const errors = require('@feathersjs/errors');
 const mongoose = require('mongoose');
 require('dotenv').config();
 // async function wrapper for handling error without surrounding every await with a try/catch. Reference article: https://medium.com/@Abazhenov/using-async-await-in-express-with-node-8-b8af872c0016
-// require('express-async-errors');
+require('express-async-errors');
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -63,7 +63,7 @@ app.use((req, res, next) => {
 // development error handler
 // will print stacktrace
 if (!isProduction) {
-  app.use((error, req, res) => {
+  app.use((error, req, res, next) => {
     console.log(error.stack);
 
     // error.status for a standard error
@@ -79,7 +79,7 @@ if (!isProduction) {
 
 // production error handler
 // no stacktraces leaked to user
-app.use((error, req, res) => {
+app.use((error, req, res, next) => {
 
   // error.status for a standard error
   // error.code for an error from @feather/error library
