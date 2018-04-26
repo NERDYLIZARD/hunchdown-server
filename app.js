@@ -20,7 +20,8 @@ const app = express();
 app.use(cors());
 
 // Normal express config defaults
-app.use(logger('dev'));
+if (!isProduction)
+  app.use(logger('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
