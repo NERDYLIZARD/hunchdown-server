@@ -4,8 +4,12 @@
   "private": true,
   "scripts": {
     "setup": "npm install && node ./tools/createEnvironmentFile.js",
-    "start": "node ./app.js",
-    "dev": "nodemon ./app.js"
+    "mongo": "mongod",
+    "prod": "node ./bin/www",
+    "dev": "nodemon ./bin/www",
+    "start": "concurrently -k -r -s first \"npm run test:watch\" \"npm run dev\"",
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "dependencies": {
     "@feathersjs/errors": "^3.3.0",
@@ -25,7 +29,10 @@
     "serve-favicon": "~2.3.2"
   },
   "devDependencies": {
+    "concurrently": "^3.5.1",
     "dotenv": "^5.0.1",
-    "nodemon": "^1.17.3"
+    "jest": "^22.4.3",
+    "nodemon": "^1.17.3",
+    "supertest": "^3.0.0"
   }
 }
