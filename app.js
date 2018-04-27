@@ -12,7 +12,7 @@ require('dotenv').config();
 // async function wrapper for handling error without surrounding every await with a try/catch. Reference article: https://medium.com/@Abazhenov/using-async-await-in-express-with-node-8-b8af872c0016
 require('express-async-errors');
 
-const isProduction = process.env.NODE_ENV === 'production';
+const isDevelopment = process.env.NODE_ENV === 'development';
 
 // Create global app object
 const app = express();
@@ -20,7 +20,7 @@ const app = express();
 app.use(cors());
 
 // Normal express config defaults
-if (!isProduction)
+if (isDevelopment)
   app.use(logger('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -30,13 +30,13 @@ app.use(express.static(__dirname + '/public'));
 
 app.use(session({ secret: process.env.SESSION_KEY, cookie: { maxAge: 60000 }, resave: false, saveUninitialized: false }));
 
-if (!isProduction) {
+if (isDevelopment) {
   app.use(errorhandler());
 }
 
 // Mongoose connection
 mongoose.connect(process.env.MONGODB_URI);
-if (!isProduction)
+if (isDevelopment)
   mongoose.set('debug', true);
 
 // Model
@@ -63,7 +63,7 @@ app.use((req, res, next) => {
 
 // development error handler
 // will print stacktrace
-if (!isProduction) {
+if (isDevelopment) {
   app.use((error, req, res, next) => {
     console.log(error.stack);
 

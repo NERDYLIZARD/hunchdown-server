@@ -3,24 +3,17 @@
  */
 const request = require('supertest');
 const app = require('../../app');
-const mongoose = require('mongoose');
-const Mockgoose = require('mockgoose').Mockgoose;
-const mockgoose = new Mockgoose(mongoose);
+const { connectDatabase, disconnectDatabase } = require('../../utils/testHelper');
 
 const baseUrl = '/api/cards';
 process.env.NODE_ENV = 'test';
 
 beforeAll(async () => {
-  await mockgoose.prepareStorage();
-  return mongoose.connect(process.env.MONGODB_URI);
+  connectDatabase();
 });
 
-
 afterAll(async () => {
-  mongoose.models = {};
-  mongoose.modelSchemas = {};
-  await mockgoose.helper.reset();
-  return mongoose.disconnect();
+  disconnectDatabase();
 });
 
 describe('Cards routes', () => {

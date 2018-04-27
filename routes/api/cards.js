@@ -8,9 +8,6 @@ const { getFullUrl, getPaginationLink } = require('../../utils/url');
 
 const Card = mongoose.model('Card');
 
-router.get('/test', async (req, res, next) => {
-  res.sendStatus(200);
-});
 
 router.get('/', async (req, res) => {
 
@@ -85,7 +82,6 @@ router.delete('/:card', async (req, res, next) => {
   await card.remove();
   res.sendStatus(204);
 });
-
 
 
 module.exports = router;
