@@ -228,4 +228,27 @@ describe('Cards routes', () => {
     });
   });
 
+
+  describe('DELETE /cards/:card', () => {
+
+    let card = null;
+    beforeAll(async () => {
+      // post one card
+      const response = await request(app)
+        .post(baseUrl)
+        .send(createCardObject());
+      card = response.body;
+    });
+
+    it('should return status 204 on success', async () => {
+      const response = await request(app).delete(`${baseUrl}/${card._id}`);
+      expect(response.status).toBe(204);
+    });
+
+    it('should return status 404 when no card Found', async () => {
+      const response = await request(app).delete(`${baseUrl}/${card._id}`);
+      expect(response.status).toBe(404);
+    });
+  });
+
 });
