@@ -113,18 +113,17 @@ describe('Cards routes', () => {
 
     describe('ValidationError', () => {
 
+      const card = createCardObjectWithOut('wisdom');
+
       it('should return status 422', async () => {
-        const card = createCardObjectWithOut('wisdom');
         const response = await request(app)
           .post(baseUrl)
           .send(card);
         expect(response.status).toBe(422);
-        expect(response.body.errors).toBeInstanceOf(Array);
       });
 
       it('should return array of errors[] and each error has correct props', async () => {
         const errorProps = getValidationErrorProps();
-        const card = createCardObjectWithOut('wisdom');
         const response = await request(app)
           .post(baseUrl)
           .send(card);
@@ -135,10 +134,10 @@ describe('Cards routes', () => {
     });
   });
 
+
   describe('GET /cards/:card', () => {
 
     let card = null;
-
     beforeAll(async () => {
       // post one card
       const response = await request(app)
@@ -161,7 +160,72 @@ describe('Cards routes', () => {
       const response = await request(app).get(`${baseUrl}/noMatchingId`);
       expect(response.status).toBe(404);
     });
+  });
 
+
+  describe('PATCH /cards/:card', () => {
+
+    let card = null;
+
+    beforeAll(async () => {
+      // post one card
+      const response = await request(app)
+        .post(baseUrl)
+        .send(createCardObject());
+      card = response.body;
+    });
+
+    describe('Success', () => {
+
+      const updatingCard = createCardObject();
+      updatingCard.wisdom = 'theUpdate';
+
+      it('should return status 200', async () => {
+        const response = await request(app)
+          .patch(`${baseUrl}/${card._id}`)
+          .send(updatingCard);
+        expect(response.status).toBe(200);
+      });
+
+      it('should return an updated card as resource object', async () => {
+        const response = await request(app)
+          .patch(`${baseUrl}/${card._id}`)
+          .send(updatingCard);
+        expect(response.body.wisdom).toBe(updatingCard.wisdom);
+        expect(response.body.attribute).toBe(updatingCard.attribute);
+      });
+    });
+
+    describe('ValidationError', () => {
+
+      const updatingCard = createCardObjectWithOut('wisdom');
+
+      it('should return status 422', async () => {
+        const response = await request(app)
+          .patch(`${baseUrl}/${card._id}`)
+          .send(updatingCard);
+        expect(response.status).toBe(422);
+      });
+
+      it('should return array of errors[] and each error has correct props', async () => {
+        const errorProps = getValidationErrorProps();
+        const response = await request(app)
+          .patch(`${baseUrl}/${card._id}`)
+          .send(updatingCard);
+        const sampleErrorProps = Object.keys(response.body.errors[0]);
+        expect(response.body.errors).toBeInstanceOf(Array);
+        errorProps.forEach(prop => expect(sampleErrorProps).toContain(prop));
+      });
+    });
+
+    describe('Not Found', () => {
+      it('should return status 404', async () => {
+        const response = await request(app)
+          .patch(`${baseUrl}/noMatchingId`)
+          .send(createCardObject());
+        expect(response.status).toBe(404);
+      });
+    });
   });
 
 });
