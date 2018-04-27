@@ -3,14 +3,12 @@
  */
 const request = require('supertest');
 const app = require('../../app');
-const { mongoose, connectDatabase, disconnectDatabase } = require('../../utils/testHelper');
+const { mongoose, connectDatabase, disconnectDatabase, getCardProps, getValidationErrorProps } = require('../../utils/testHelper');
 
 const Card = mongoose.model('Card');
 const baseUrl = '/api/cards';
-process.env.NODE_ENV = 'test';
 
-jest.setTimeout(100000); // 10 second timeout
-
+jest.setTimeout(100000); // 100 second timeout
 
 function createCardObject() {
   return {
@@ -37,6 +35,7 @@ beforeAll(async () => {
   card = await card.save();
 });
 
+
 afterAll(async () => {
   await disconnectDatabase();
 });
@@ -51,17 +50,34 @@ describe('Cards routes', () => {
         expect(response.status).toBe(200);
       });
 
+      it('should return Link header', async () => {
+        const response = await request(app).get(baseUrl);
+        expect(response.header.link).toBeDefined();
+      });
+
+      it('should return X-Current-Page header', async () => {
+        const response = await request(app).get(baseUrl);
+        expect(response.header['x-current-page']).toBeDefined();
+        expect(response.header['x-current-page']).toBe('1');
+      });
+
+      it('should return X-Total-Pages header', async () => {
+        const response = await request(app).get(baseUrl);
+        expect(response.header['x-total-pages']).toBeDefined();
+      });
+
       it('should return JSON array', async () => {
         const response = await request(app).get(baseUrl);
         expect(response.body).toBeInstanceOf(Array);
       });
 
       it('should return object with correct props', async () => {
-        const expectedProps = ['_id', 'wisdom', 'attribute'];
+        const expectedProps = getCardProps();
         const response = await request(app).get(baseUrl);
         const sampleKeys = Object.keys(response.body[0]);
         expectedProps.forEach(key => expect(sampleKeys).toContain(key));
       });
+
     });
   });
 
@@ -106,7 +122,7 @@ describe('Cards routes', () => {
       });
 
       it('should return array of errors[] and each error has correct props', async () => {
-        const errorProps = ['code', 'message', 'field', 'resource'];
+        const errorProps = getValidationErrorProps();
         const card = createCardObjectWithOut('wisdom');
         const response = await request(app)
           .post(baseUrl)
@@ -115,9 +131,7 @@ describe('Cards routes', () => {
         expect(response.body.errors).toBeInstanceOf(Array);
         errorProps.forEach(prop => expect(sampleErrorProps).toContain(prop));
       });
-
     });
   });
-
 
 });
