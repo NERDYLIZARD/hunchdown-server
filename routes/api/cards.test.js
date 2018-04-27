@@ -31,6 +31,7 @@ function createCardObjectWithOut(prop) {
 
 beforeAll(async () => {
   await connectDatabase();
+  // create one card
   let card = new Card(createCardObject());
   card = await card.save();
 });
@@ -82,7 +83,7 @@ describe('Cards routes', () => {
   });
 
 
-  describe('POST /card', () => {
+  describe('POST /cards', () => {
     describe('Success', () => {
 
       it('should return status 201', async () => {
@@ -132,6 +133,35 @@ describe('Cards routes', () => {
         errorProps.forEach(prop => expect(sampleErrorProps).toContain(prop));
       });
     });
+  });
+
+  describe('GET /cards/:card', () => {
+
+    let card = null;
+
+    beforeAll(async () => {
+      // post one card
+      const response = await request(app)
+        .post(baseUrl)
+        .send(createCardObject());
+      card = response.body;
+    });
+
+    it('should return status 200', async () => {
+      const response = await request(app).get(`${baseUrl}/${card._id}`);
+      expect(response.status).toBe(200);
+    });
+
+    it('should return a card as resource object', async () => {
+      const response = await request(app).get(`${baseUrl}/${card._id}`);
+      expect(response.body).toEqual(card);
+    });
+
+    it('should return response 404 when no card found', async () => {
+      const response = await request(app).get(`${baseUrl}/noMatchingId`);
+      expect(response.status).toBe(404);
+    });
+
   });
 
 });
