@@ -7,14 +7,14 @@ const mockgoose = new Mockgoose(mongoose);
 
 async function connectDatabase() {
   await mockgoose.prepareStorage();
-  return mongoose.connect(process.env.MONGODB_URI);
+  await mongoose.connect(process.env.MONGODB_URI);
 }
 
 async function disconnectDatabase() {
   mongoose.models = {};
   mongoose.modelSchemas = {};
   await mockgoose.helper.reset();
-  return mongoose.disconnect();
+  await mongoose.disconnect();
 }
 
-module.exports = { connectDatabase, disconnectDatabase };
+module.exports = { connectDatabase, disconnectDatabase, mongoose };
