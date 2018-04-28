@@ -30,5 +30,4 @@ function getPaginationLink(req, page, perPage, totalPages) {
   return paginationLink;
 }
 
-module.exports.getFullUrl = getFullUrl;
-module.exports.getPaginationLink = getPaginationLink;
+module.exports = { getFullUrl, getPaginationLink };

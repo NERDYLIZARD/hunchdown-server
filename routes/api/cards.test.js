@@ -3,31 +3,15 @@
  */
 const request = require('supertest');
 const app = require('../../app');
-const { mongoose, connectDatabase, disconnectDatabase, getCardProps, getValidationErrorProps } = require('../../utils/testHelper');
+const { mongoose, connectDatabase, disconnectDatabase } = require('../../utils/test/testHelper');
+const { getCardProps, createCardObject, createCardObjectWithOut } = require('../../utils/test/data/cards');
+const { getValidationErrorProps } = require('../../utils/test/data/validationErrors');
 
 const Card = mongoose.model('Card');
 const baseUrl = '/api/cards';
 
 jest.setTimeout(100000); // 100 second timeout
 
-function createCardObject() {
-  return {
-    wisdom: 'foo',
-    attribute: 'bar',
-  }
-}
-
-function createCardObjectWithInvalid(key, value) {
-  const card = createCardObject();
-  card[key] = value;
-  return card;
-}
-
-function createCardObjectWithOut(prop) {
-  const card = createCardObject();
-  delete card[prop];
-  return card;
-}
 
 beforeAll(async () => {
   await connectDatabase();

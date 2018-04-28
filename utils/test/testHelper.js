@@ -21,8 +21,4 @@ module.exports = {
     await mongoose.disconnect();
   },
 
-  getCardProps: () => (['_id', 'wisdom', 'attribute']),
-
-  getValidationErrorProps: () => (['code', 'message', 'field', 'resource']),
-
 };
