@@ -4,20 +4,22 @@
 const request = require('supertest');
 const app = require('../../app');
 const { mongoose, connectDatabase, disconnectDatabase } = require('../../utils/test/testHelper');
-const { getCardProps, createCardObject, createCardObjectWithOut } = require('../../utils/test/data/cards');
-const { getValidationErrorProps } = require('../../utils/test/data/validationErrors');
+const CardSampleData = require('../../utils/test/sampleData/CardSampleData');
+const ValidationErrorSampleData = require('../../utils/test/sampleData/ValidationErrorSampleData');
 
 const Card = mongoose.model('Card');
 const baseUrl = '/api/cards';
+const cardSampleData = new CardSampleData();
+const validationErrorSampleData = new ValidationErrorSampleData();
 
 jest.setTimeout(100000); // 100 second timeout
 
 
 beforeAll(async () => {
   await connectDatabase();
-  // create one card
-  let card = new Card(createCardObject());
-  card = await card.save();
+  // seed a card
+  const card = new Card(cardSampleData.createObject());
+  await card.save();
 });
 
 
@@ -57,7 +59,7 @@ describe('Cards routes', () => {
       });
 
       it('should return object with correct props', async () => {
-        const expectedProps = getCardProps();
+        const expectedProps = cardSampleData.getObjectProps();
         const response = await request(app).get(baseUrl);
         const sampleKeys = Object.keys(response.body[0]);
         expectedProps.forEach(key => expect(sampleKeys).toContain(key));
@@ -73,20 +75,20 @@ describe('Cards routes', () => {
       it('should return status 201', async () => {
         const response = await request(app)
           .post(baseUrl)
-          .send(createCardObject());
+          .send(cardSampleData.createObject());
         expect(response.status).toBe(201);
       });
 
       it('should return Location header', async () => {
         const response = await request(app)
           .post(baseUrl)
-          .send(createCardObject());
+          .send(cardSampleData.createObject());
         expect(response.header.location).toBeDefined();
         expect(typeof response.header.location).toBe('string');
       });
 
       it('should return a card as resource object', async () => {
-        const card = createCardObject();
+        const card = cardSampleData.createObject();
         const response = await request(app)
           .post(baseUrl)
           .send(card);
@@ -97,7 +99,7 @@ describe('Cards routes', () => {
 
     describe('ValidationError', () => {
 
-      const card = createCardObjectWithOut('wisdom');
+      const card = cardSampleData.createObjectWithOut('wisdom');
 
       it('should return status 422', async () => {
         const response = await request(app)
@@ -107,7 +109,7 @@ describe('Cards routes', () => {
       });
 
       it('should return array of errors[] and each error has correct props', async () => {
-        const errorProps = getValidationErrorProps();
+        const errorProps = validationErrorSampleData.getObjectProps();
         const response = await request(app)
           .post(baseUrl)
           .send(card);
@@ -126,7 +128,7 @@ describe('Cards routes', () => {
       // post one card
       const response = await request(app)
         .post(baseUrl)
-        .send(createCardObject());
+        .send(cardSampleData.createObject());
       card = response.body;
     });
 
@@ -155,13 +157,13 @@ describe('Cards routes', () => {
       // post one card
       const response = await request(app)
         .post(baseUrl)
-        .send(createCardObject());
+        .send(cardSampleData.createObject());
       card = response.body;
     });
 
     describe('Success', () => {
 
-      const updatingCard = createCardObject();
+      const updatingCard = cardSampleData.createObject();
       updatingCard.wisdom = 'theUpdate';
 
       it('should return status 200', async () => {
@@ -182,7 +184,7 @@ describe('Cards routes', () => {
 
     describe('ValidationError', () => {
 
-      const updatingCard = createCardObjectWithOut('wisdom');
+      const updatingCard = cardSampleData.createObjectWithOut('wisdom');
 
       it('should return status 422', async () => {
         const response = await request(app)
@@ -192,7 +194,7 @@ describe('Cards routes', () => {
       });
 
       it('should return array of errors[] and each error has correct props', async () => {
-        const errorProps = getValidationErrorProps();
+        const errorProps = validationErrorSampleData.getObjectProps();
         const response = await request(app)
           .patch(`${baseUrl}/${card._id}`)
           .send(updatingCard);
@@ -206,7 +208,7 @@ describe('Cards routes', () => {
       it('should return status 404', async () => {
         const response = await request(app)
           .patch(`${baseUrl}/noMatchingId`)
-          .send(createCardObject());
+          .send(cardSampleData.createObject());
         expect(response.status).toBe(404);
       });
     });
@@ -220,7 +222,7 @@ describe('Cards routes', () => {
       // post one card
       const response = await request(app)
         .post(baseUrl)
-        .send(createCardObject());
+        .send(cardSampleData.createObject());
       card = response.body;
     });
 
