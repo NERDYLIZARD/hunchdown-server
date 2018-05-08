@@ -8,4 +8,4 @@ const CardSchema = new mongoose.Schema({
   attribute: String,
 }, { timestamps: true });
 
-mongoose.model('Card', CardSchema);
+module.exports = mongoose.model('Card', CardSchema);
