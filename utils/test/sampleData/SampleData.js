@@ -24,9 +24,12 @@ class SampleData {
   }
 
   // return array of object's key with _id e.g.
-    // ["_id", "title", "description"]
+  // ["_id", "title", "description"]
   getObjectProps() {
-    return Object.keys(this.object).reduce((props, key) => props.concat(key), ['_id']);
+    return Object.keys(this.object).reduce((props, key) => {
+      props.push(key);
+      return props;
+    }, ['_id']);
   }
 
 }

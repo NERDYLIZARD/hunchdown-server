@@ -16,7 +16,10 @@ class ValidationErrorSampleData extends SampleData {
   }
 
   getObjectProps() {
-    return Object.keys(this.validationError).reduce((props, key) => props.concat(key), []);
+    return Object.keys(this.validationError).reduce((props, key) => {
+      props.push(key);
+      return props;
+    }, []);
   }
 
 }
