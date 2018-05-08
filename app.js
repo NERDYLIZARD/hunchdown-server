@@ -8,7 +8,9 @@ const passport = require('passport');
 const errorhandler = require('errorhandler');
 const errors = require('@feathersjs/errors');
 const mongoose = require('mongoose');
+// importing variables in .env file into a global object process.env
 require('dotenv').config();
+const keys = require('./config');
 // async function wrapper for handling error without surrounding every await with a try/catch. Reference article: https://medium.com/@Abazhenov/using-async-await-in-express-with-node-8-b8af872c0016
 require('express-async-errors');
 
@@ -30,7 +32,7 @@ app.use(bodyParser.json());
 app.use(methodOverride());
 app.use(express.static(__dirname + '/public'));
 
-app.use(session({ secret: process.env.SESSION_KEY, cookie: { maxAge: 60000 }, resave: false, saveUninitialized: false }));
+app.use(session({ secret: keys.sessionKey, cookie: { maxAge: 60000 }, resave: false, saveUninitialized: false }));
 
 if (isDevelopment) {
   app.use(errorhandler());
@@ -39,7 +41,7 @@ if (isDevelopment) {
 /**
  * Mongoose connection
  */
-mongoose.connect(process.env.MONGODB_URI);
+mongoose.connect(keys.mongoURI);
 if (isDevelopment)
   mongoose.set('debug', true);
 
