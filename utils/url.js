@@ -3,6 +3,11 @@
  */
 const url = require('url');
 
+/**
+ *
+ * @param req
+ * @returns string fullUrl
+ */
 // example output: "http://localhost:4000/api/cards"
 function getFullUrl(req) {
   return url.format({

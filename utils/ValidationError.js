@@ -10,6 +10,9 @@ const errorCodes = {
   ALREADY_EXISTS: 'AlreadyExists',
 };
 
+/**
+ * A class of custom validation error extended from FeatherErrors
+ */
 class ValidationError extends FeathersError {
 
   constructor(arg1, arg2) {

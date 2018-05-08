@@ -19,7 +19,9 @@ const app = express();
 
 app.use(cors());
 
-// Normal express config defaults
+/**
+ * Normal express config defaults
+ */
 if (isDevelopment)
   app.use(logger('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -34,35 +36,50 @@ if (isDevelopment) {
   app.use(errorhandler());
 }
 
-// Mongoose connection
+/**
+ * Mongoose connection
+ */
 mongoose.connect(process.env.MONGODB_URI);
 if (isDevelopment)
   mongoose.set('debug', true);
 
-// Model
+/**
+ * Models
+ */
 require('./models/Card');
 
-// Routes
+/**
+ * Routers
+ */
 app.use(require('./routes'));
 
-/// catch 404 and forward to error handler
+
+/**
+ * catch 404 and forward to error handler
+ */
 app.use((req, res, next) => {
   const error = new errors.NotFound('Not Found');
   next(error);
 });
 
-/// error handlers
 
-// // ideal error response
-// res.json({
-//   code: '1234' or 'CamalCaseString',
-//   message: error.message,
-//   description: "bla bla about code 1234",
-//   documentationUrl: "http://urltodoc.com",
-// });
+/**
+ * Centralized error handlers
+ */
+/**
+ * ideal error response:
+ * {
+ *  code: '1234' or 'camalCaseString',
+ *  message: error.message,
+ *  description: "bla bla about code 1234",
+ *  documentationUrl: "http://urltodoc.com",
+ * }
+ */
 
-// development error handler
-// will print stacktrace
+/**
+ * Development error handler
+ * will print stacktrace
+ */
 if (isDevelopment) {
   app.use((error, req, res, next) => {
     console.log(error.stack);
@@ -78,8 +95,10 @@ if (isDevelopment) {
   });
 }
 
-// production error handler
-// no stacktraces leaked to user
+/**
+ * production error handler
+ * no stacktraces leaked to user
+ */
 app.use((error, req, res, next) => {
 
   // error.status for a standard error

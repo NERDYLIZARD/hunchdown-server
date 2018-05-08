@@ -6,30 +6,34 @@ const MongooseError = require('mongoose').Error;
 const ValidationError = require('../../utils/ValidationError');
 
 
-// API Routes
+/**
+ * API Routes
+ */
 router.use('/cards', require('./cards'));
 
 
-// ValidationError handler
-
-//// Validation Error Format
-// {
-//   code:
-//   message:
-//   errors: [
-//     {
-//       code:
-//       message:
-//       field:
-//       resource:
-//     }
-//   ]
-// }
+/**
+ * ValidationError handler
+ */
+/**
+ * Validation Error Format:
+ * {
+ *  code:
+ *  message:
+ *  errors: [
+ *    {
+ *      code:
+ *      message:
+ *      field:
+ *      resource:
+ *    }
+ *  ]
+ * }
+ */
 
 router.use((err, req, res, next) => {
 
   // handle MongoDB validation errors
-    // not tested, potential bug on instanceof MongooseError
   if (err.name === 'ValidationError' && err instanceof MongooseError) {
     return res.status(err.status || 422).json({
       code: err.name,
@@ -38,9 +42,10 @@ router.use((err, req, res, next) => {
 
         // create each error according to a key
         const error = ValidationError.createValidationError(
-          err.errors[key].kind,
-          err.errors[key].message,
-          err.errors[key].path,
+          // TODO: mapping err.name to errorCode in ValidationError class e.g. alreadyExist, missingField, etc.
+          err.errors[key].kind, // code
+          err.errors[key].message, // message
+          err.errors[key].path, // field
         );
         // push the error into an errors array
         errors.push(error);
