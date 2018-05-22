@@ -3,7 +3,7 @@
  */
 const SampleData = require('./SampleData');
 
-class CardSampleData extends SampleData {
+class HunchSampleData extends SampleData {
   constructor() {
     super({
       wisdom: 'foo',
@@ -12,4 +12,4 @@ class CardSampleData extends SampleData {
   }
 }
 
-module.exports = CardSampleData;
+module.exports = HunchSampleData;

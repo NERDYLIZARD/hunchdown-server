@@ -3,9 +3,9 @@
  */
 const mongoose = require('mongoose');
 
-const CardSchema = new mongoose.Schema({
+const HunchSchema = new mongoose.Schema({
   wisdom: { type: String, required: [true, "wisdom is required"] },
   attribute: String,
 }, { timestamps: true });
 
-module.exports = mongoose.model('Card', CardSchema);
+module.exports = mongoose.model('Hunch', HunchSchema);

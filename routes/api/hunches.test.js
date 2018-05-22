@@ -4,12 +4,12 @@
 const request = require('supertest');
 const app = require('../../app');
 const { mongoose, connectDatabase, disconnectDatabase } = require('../../utils/test/testHelper');
-const CardSampleData = require('../../utils/test/sampleData/CardSampleData');
+const HunchSampleData = require('../../utils/test/sampleData/HunchSampleData');
 const ValidationErrorSampleData = require('../../utils/test/sampleData/ValidationErrorSampleData');
 
-const Card = mongoose.model('Card');
-const baseUrl = '/api/cards';
-const cardSampleData = new CardSampleData();
+const Hunch = mongoose.model('Hunch');
+const baseUrl = '/api/hunches';
+const hunchSampleData = new HunchSampleData();
 const validationErrorSampleData = new ValidationErrorSampleData();
 
 jest.setTimeout(100000); // 100 second timeout
@@ -17,9 +17,9 @@ jest.setTimeout(100000); // 100 second timeout
 
 beforeAll(async () => {
   await connectDatabase();
-  // seed a card
-  const card = new Card(cardSampleData.createObject());
-  await card.save();
+  // seed a hunch
+  const hunch = new Hunch(hunchSampleData.createObject());
+  await hunch.save();
 });
 
 
@@ -27,9 +27,9 @@ afterAll(async () => {
   await disconnectDatabase();
 });
 
-describe('Cards routes', () => {
+describe('Hunches routes', () => {
 
-  describe('GET /cards', () => {
+  describe('GET /hunches', () => {
     describe('Success', () => {
 
       it('should return status 200', async () => {
@@ -59,7 +59,7 @@ describe('Cards routes', () => {
       });
 
       it('should return object with correct props', async () => {
-        const expectedProps = cardSampleData.getObjectProps();
+        const expectedProps = hunchSampleData.getObjectProps();
         const response = await request(app).get(baseUrl);
         const sampleKeys = Object.keys(response.body[0]);
         expectedProps.forEach(key => expect(sampleKeys).toContain(key));
@@ -69,42 +69,42 @@ describe('Cards routes', () => {
   });
 
 
-  describe('POST /cards', () => {
+  describe('POST /hunches', () => {
     describe('Success', () => {
 
       it('should return status 201', async () => {
         const response = await request(app)
           .post(baseUrl)
-          .send(cardSampleData.createObject());
+          .send(hunchSampleData.createObject());
         expect(response.status).toBe(201);
       });
 
       it('should return Location header', async () => {
         const response = await request(app)
           .post(baseUrl)
-          .send(cardSampleData.createObject());
+          .send(hunchSampleData.createObject());
         expect(response.header.location).toBeDefined();
         expect(typeof response.header.location).toBe('string');
       });
 
-      it('should return a card as resource object', async () => {
-        const card = cardSampleData.createObject();
+      it('should return a hunch as resource object', async () => {
+        const hunch = hunchSampleData.createObject();
         const response = await request(app)
           .post(baseUrl)
-          .send(card);
-        expect(response.body.wisdom).toBe(card.wisdom);
-        expect(response.body.attribute).toBe(card.attribute);
+          .send(hunch);
+        expect(response.body.wisdom).toBe(hunch.wisdom);
+        expect(response.body.attribute).toBe(hunch.attribute);
       });
     });
 
     describe('ValidationError', () => {
 
-      const card = cardSampleData.createObjectWithOut('wisdom');
+      const hunch = hunchSampleData.createObjectWithOut('wisdom');
 
       it('should return status 422', async () => {
         const response = await request(app)
           .post(baseUrl)
-          .send(card);
+          .send(hunch);
         expect(response.status).toBe(422);
       });
 
@@ -112,7 +112,7 @@ describe('Cards routes', () => {
         const errorProps = validationErrorSampleData.getObjectProps();
         const response = await request(app)
           .post(baseUrl)
-          .send(card);
+          .send(hunch);
         const sampleErrorProps = Object.keys(response.body.errors[0]);
         expect(response.body.errors).toBeInstanceOf(Array);
         errorProps.forEach(prop => expect(sampleErrorProps).toContain(prop));
@@ -121,83 +121,83 @@ describe('Cards routes', () => {
   });
 
 
-  describe('GET /cards/:card', () => {
+  describe('GET /hunches/:hunch', () => {
 
-    let card = null;
+    let hunch = null;
     beforeAll(async () => {
-      // post one card
+      // post one hunch
       const response = await request(app)
         .post(baseUrl)
-        .send(cardSampleData.createObject());
-      card = response.body;
+        .send(hunchSampleData.createObject());
+      hunch = response.body;
     });
 
     it('should return status 200', async () => {
-      const response = await request(app).get(`${baseUrl}/${card._id}`);
+      const response = await request(app).get(`${baseUrl}/${hunch._id}`);
       expect(response.status).toBe(200);
     });
 
-    it('should return a card as resource object', async () => {
-      const response = await request(app).get(`${baseUrl}/${card._id}`);
-      expect(response.body).toEqual(card);
+    it('should return a hunch as resource object', async () => {
+      const response = await request(app).get(`${baseUrl}/${hunch._id}`);
+      expect(response.body).toEqual(hunch);
     });
 
-    it('should return response 404 when no card found', async () => {
+    it('should return response 404 when no hunch found', async () => {
       const response = await request(app).get(`${baseUrl}/noMatchingId`);
       expect(response.status).toBe(404);
     });
   });
 
 
-  describe('PATCH /cards/:card', () => {
+  describe('PATCH /hunches/:hunch', () => {
 
-    let card = null;
+    let hunch = null;
 
     beforeAll(async () => {
-      // post one card
+      // post one hunch
       const response = await request(app)
         .post(baseUrl)
-        .send(cardSampleData.createObject());
-      card = response.body;
+        .send(hunchSampleData.createObject());
+      hunch = response.body;
     });
 
     describe('Success', () => {
 
-      const updatingCard = cardSampleData.createObject();
-      updatingCard.wisdom = 'theUpdate';
+      const updatingHunch = hunchSampleData.createObject();
+      updatingHunch.wisdom = 'theUpdate';
 
       it('should return status 200', async () => {
         const response = await request(app)
-          .patch(`${baseUrl}/${card._id}`)
-          .send(updatingCard);
+          .patch(`${baseUrl}/${hunch._id}`)
+          .send(updatingHunch);
         expect(response.status).toBe(200);
       });
 
-      it('should return an updated card as resource object', async () => {
+      it('should return an updated hunch as resource object', async () => {
         const response = await request(app)
-          .patch(`${baseUrl}/${card._id}`)
-          .send(updatingCard);
-        expect(response.body.wisdom).toBe(updatingCard.wisdom);
-        expect(response.body.attribute).toBe(updatingCard.attribute);
+          .patch(`${baseUrl}/${hunch._id}`)
+          .send(updatingHunch);
+        expect(response.body.wisdom).toBe(updatingHunch.wisdom);
+        expect(response.body.attribute).toBe(updatingHunch.attribute);
       });
     });
 
     describe('ValidationError', () => {
 
-      const updatingCard = cardSampleData.createObjectWithOut('wisdom');
+      const updatingHunch = hunchSampleData.createObjectWithOut('wisdom');
 
       it('should return status 422', async () => {
         const response = await request(app)
-          .patch(`${baseUrl}/${card._id}`)
-          .send(updatingCard);
+          .patch(`${baseUrl}/${hunch._id}`)
+          .send(updatingHunch);
         expect(response.status).toBe(422);
       });
 
       it('should return array of errors[] and each error has correct props', async () => {
         const errorProps = validationErrorSampleData.getObjectProps();
         const response = await request(app)
-          .patch(`${baseUrl}/${card._id}`)
-          .send(updatingCard);
+          .patch(`${baseUrl}/${hunch._id}`)
+          .send(updatingHunch);
         const sampleErrorProps = Object.keys(response.body.errors[0]);
         expect(response.body.errors).toBeInstanceOf(Array);
         errorProps.forEach(prop => expect(sampleErrorProps).toContain(prop));
@@ -208,31 +208,31 @@ describe('Cards routes', () => {
       it('should return status 404', async () => {
         const response = await request(app)
           .patch(`${baseUrl}/noMatchingId`)
-          .send(cardSampleData.createObject());
+          .send(hunchSampleData.createObject());
         expect(response.status).toBe(404);
       });
     });
   });
 
 
-  describe('DELETE /cards/:card', () => {
+  describe('DELETE /hunches/:hunch', () => {
 
-    let card = null;
+    let hunch = null;
     beforeAll(async () => {
-      // post one card
+      // post one hunch
       const response = await request(app)
         .post(baseUrl)
-        .send(cardSampleData.createObject());
-      card = response.body;
+        .send(hunchSampleData.createObject());
+      hunch = response.body;
     });
 
     it('should return status 204 on success', async () => {
-      const response = await request(app).delete(`${baseUrl}/${card._id}`);
+      const response = await request(app).delete(`${baseUrl}/${hunch._id}`);
       expect(response.status).toBe(204);
     });
 
-    it('should return status 404 when no card Found', async () => {
-      const response = await request(app).delete(`${baseUrl}/${card._id}`);
+    it('should return status 404 when no hunch Found', async () => {
+      const response = await request(app).delete(`${baseUrl}/${hunch._id}`);
       expect(response.status).toBe(404);
     });
   });

@@ -9,7 +9,7 @@ const ValidationError = require('../../utils/ValidationError');
 /**
  * API Routes
  */
-router.use('/cards', require('./cards'));
+router.use('/hunches', require('./hunches'));
 
 
 /**

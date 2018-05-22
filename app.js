@@ -48,7 +48,7 @@ if (isDevelopment)
 /**
  * Models
  */
-require('./models/Card');
+require('./models/Hunch');
 
 /**
  * Routers
