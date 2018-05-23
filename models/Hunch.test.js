@@ -1,42 +1,67 @@
 /**
  * Created on 08-May-18.
  */
-  // "require" instead of "mongoose.model" because there is no model registration since we don't want to connect to the database
 const Hunch = require('./Hunch');
 const HunchSampleData = require('../utils/test/sampleData/HunchSampleData');
 
 const hunchSampleData = new HunchSampleData();
 
+const omitArticles = require('../utils/omitArticles');
+jest.mock('../utils/omitArticles', () => jest.fn(str => str));
+
 describe('Hunch Model', () => {
+  /**
+   * Middlewares
+   */
+  describe('Middlewares', () => {
 
-  describe('Validation', () => {
+    describe('`generateSlug()`', () => {
+      let hunch;
+      let generateSlug;
+      const next = jest.fn();
 
-    it('should return validation failed on hunch without wisdom', () => {
-      const hunch = new Hunch(hunchSampleData.createObjectWithOut('wisdom'));
-      return hunch.validate()
-        .catch(error => {
-          expect(error.errors.wisdom).toBeDefined();
-          expect(error.errors.wisdom.kind).toBe('required');
+      beforeEach(() => {
+        hunch = new Hunch(hunchSampleData.createObject());
+        generateSlug = Hunch.middlewares.generateSlug.bind(hunch);
+        jest.spyOn(hunch, 'slugify');
+      });
+
+      it('always calls next()', () => {
+        hunch.slug = undefined;
+        generateSlug(next);
+        expect(next).toBeCalled();
+      });
+
+      describe('when `slug` is undefined', () => {
+        it('calls `slugify()`', () => {
+          hunch.slug = undefined;
+          generateSlug(next);
+          expect(hunch.slugify).toBeCalled();
         });
-    });
+      });
 
-    it('should return castError on hunch with invalid wisdom', () => {
-      const hunch = new Hunch(hunchSampleData.createObjectWithInvalid('wisdom', 123));
-      return hunch.validate()
-        .catch(error => {
-          expect(error.errors.wisdom).toBeDefined();
-          expect(error.errors.wisdom.name).toBe('CastError');
+      describe('when `slug` is defined', () => {
+        it('does not call `slugify()`', () => {
+          hunch.slug = 'defined';
+          generateSlug(next);
+          expect(hunch.slugify).not.toBeCalled();
         });
-    });
+      });
 
-    it('should return castError on hunch with invalid attribute', () => {
-      const hunch = new Hunch(hunchSampleData.createObjectWithInvalid('attribute', 123));
-      return hunch.validate()
-        .catch(error => {
-          expect(error.errors.attribute).toBeDefined();
-          expect(error.errors.attribute.name).toBe('CastError');
-        });
     });
   });
+
+
+  describe('methods', () => {
+    describe('`slugify()`', () => {
+      const hunch = new Hunch(hunchSampleData.createObject());
+
+      it('calls `omitArticles()`', () => {
+        hunch.slugify();
+        expect(omitArticles).toBeCalled();
+      });
+    });
+  });
+
 
 });

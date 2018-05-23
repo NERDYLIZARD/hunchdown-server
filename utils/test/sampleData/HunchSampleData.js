@@ -6,8 +6,8 @@ const SampleData = require('./SampleData');
 class HunchSampleData extends SampleData {
   constructor() {
     super({
-      wisdom: 'foo',
-      attribute: 'bar',
+      wisdom: 'After reading a book, forget everything but the messages that you can apply to your life.',
+      attribute: 'Sithideth Bouasavanh',
     });
   }
 }

@@ -24,9 +24,11 @@
     "express-session": "^1.15.6",
     "method-override": "^2.3.10",
     "mongoose": "^5.0.15",
+    "mongoose-unique-validator": "^2.0.1",
     "morgan": "~1.7.0",
     "passport": "^0.4.0",
-    "serve-favicon": "~2.3.2"
+    "serve-favicon": "~2.3.2",
+    "slug": "^0.9.1"
   },
   "devDependencies": {
     "concurrently": "^3.5.1",

@@ -3,11 +3,11 @@
  */
 const request = require('supertest');
 const app = require('../../app');
-const { mongoose, connectDatabase, disconnectDatabase } = require('../../utils/test/testHelper');
+const { connectDatabase, disconnectDatabase } = require('../../utils/test/testHelper');
 const HunchSampleData = require('../../utils/test/sampleData/HunchSampleData');
 const ValidationErrorSampleData = require('../../utils/test/sampleData/ValidationErrorSampleData');
 
-const Hunch = mongoose.model('Hunch');
+const Hunch = require('../../models/Hunch');
 const baseUrl = '/api/hunches';
 const hunchSampleData = new HunchSampleData();
 const validationErrorSampleData = new ValidationErrorSampleData();
@@ -151,7 +151,7 @@ describe('Hunches routes', () => {
 
   describe('PATCH /hunches/:hunch', () => {
 
-    let hunch = null;
+    let hunch;
 
     beforeAll(async () => {
       // post one hunch

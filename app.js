@@ -46,7 +46,7 @@ if (isDevelopment)
   mongoose.set('debug', true);
 
 /**
- * Models
+ * Models Registration
  */
 require('./models/Hunch');
 

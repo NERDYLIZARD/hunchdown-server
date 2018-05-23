@@ -21,7 +21,7 @@ class SampleData {
 
   createObjectWithOut(prop) {
     const object = { ...this.object };
-    delete object[prop];
+    object[prop] = undefined;
     return object;
   }
 
