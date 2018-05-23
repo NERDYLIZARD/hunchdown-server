@@ -2,9 +2,9 @@
  * Created on 08-May-18.
  */
 const Hunch = require('./Hunch');
-const HunchSampleData = require('../utils/test/sampleData/HunchSampleData');
+const HunchDataFactory = require('../utils/test/data-factories/HunchDataFactory');
 
-const hunchSampleData = new HunchSampleData();
+const hunchDataFactory = new HunchDataFactory();
 
 const omitArticles = require('../utils/omitArticles');
 jest.mock('../utils/omitArticles', () => jest.fn(str => str));
@@ -21,7 +21,7 @@ describe('Hunch Model', () => {
       const next = jest.fn();
 
       beforeEach(() => {
-        hunch = new Hunch(hunchSampleData.createObject());
+        hunch = new Hunch(hunchDataFactory.createObject());
         generateSlug = Hunch.middlewares.generateSlug.bind(hunch);
         jest.spyOn(hunch, 'slugify');
       });
@@ -54,7 +54,7 @@ describe('Hunch Model', () => {
 
   describe('methods', () => {
     describe('`slugify()`', () => {
-      const hunch = new Hunch(hunchSampleData.createObject());
+      const hunch = new Hunch(hunchDataFactory.createObject());
 
       it('calls `omitArticles()`', () => {
         hunch.slugify();

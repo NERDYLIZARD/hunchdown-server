@@ -4,13 +4,13 @@
 const request = require('supertest');
 const app = require('../../app');
 const { connectDatabase, disconnectDatabase } = require('../../utils/test/testHelper');
-const HunchSampleData = require('../../utils/test/sampleData/HunchSampleData');
-const ValidationErrorSampleData = require('../../utils/test/sampleData/ValidationErrorSampleData');
+const HunchDataFactory = require('../../utils/test/data-factories/HunchDataFactory');
+const ValidationErrorDataFactory = require('../../utils/test/data-factories/ValidationErrorDataFactory');
 
 const Hunch = require('../../models/Hunch');
 const baseUrl = '/api/hunches';
-const hunchSampleData = new HunchSampleData();
-const validationErrorSampleData = new ValidationErrorSampleData();
+const hunchDataFactory = new HunchDataFactory();
+const validationErrorDataFactory = new ValidationErrorDataFactory();
 
 jest.setTimeout(100000); // 100 second timeout
 
@@ -18,7 +18,7 @@ jest.setTimeout(100000); // 100 second timeout
 beforeAll(async () => {
   await connectDatabase();
   // seed a hunch
-  const hunch = new Hunch(hunchSampleData.createObject());
+  const hunch = new Hunch(hunchDataFactory.createObject());
   await hunch.save();
 });
 
@@ -59,7 +59,7 @@ describe('Hunches routes', () => {
       });
 
       it('returns object with correct props', async () => {
-        const expectedProps = hunchSampleData.getObjectProps();
+        const expectedProps = hunchDataFactory.getObjectProps();
         const response = await request(app).get(baseUrl);
         const sampleKeys = Object.keys(response.body[0]);
         expectedProps.forEach(key => expect(sampleKeys).toContain(key));
@@ -75,20 +75,20 @@ describe('Hunches routes', () => {
       it('returns status 201', async () => {
         const response = await request(app)
           .post(baseUrl)
-          .send(hunchSampleData.createObject());
+          .send(hunchDataFactory.createObject());
         expect(response.status).toBe(201);
       });
 
       it('returns Location header', async () => {
         const response = await request(app)
           .post(baseUrl)
-          .send(hunchSampleData.createObject());
+          .send(hunchDataFactory.createObject());
         expect(response.header.location).toBeDefined();
         expect(typeof response.header.location).toBe('string');
       });
 
       it('returns a hunch as resource object', async () => {
-        const hunch = hunchSampleData.createObject();
+        const hunch = hunchDataFactory.createObject();
         const response = await request(app)
           .post(baseUrl)
           .send(hunch);
@@ -99,7 +99,7 @@ describe('Hunches routes', () => {
 
     describe('ValidationError', () => {
 
-      const hunch = hunchSampleData.createObjectWithOut('wisdom');
+      const hunch = hunchDataFactory.createObjectWithOut('wisdom');
 
       it('returns status 422', async () => {
         const response = await request(app)
@@ -109,7 +109,7 @@ describe('Hunches routes', () => {
       });
 
       it('returns array of errors[] and each error has correct props', async () => {
-        const errorProps = validationErrorSampleData.getObjectProps();
+        const errorProps = validationErrorDataFactory.getObjectProps();
         const response = await request(app)
           .post(baseUrl)
           .send(hunch);
@@ -128,7 +128,7 @@ describe('Hunches routes', () => {
       // post one hunch
       const response = await request(app)
         .post(baseUrl)
-        .send(hunchSampleData.createObject());
+        .send(hunchDataFactory.createObject());
       hunch = response.body;
     });
 
@@ -157,13 +157,13 @@ describe('Hunches routes', () => {
       // post one hunch
       const response = await request(app)
         .post(baseUrl)
-        .send(hunchSampleData.createObject());
+        .send(hunchDataFactory.createObject());
       hunch = response.body;
     });
 
     describe('Success', () => {
 
-      const updatingHunch = hunchSampleData.createObject();
+      const updatingHunch = hunchDataFactory.createObject();
       updatingHunch.wisdom = 'theUpdate';
 
       it('returns status 200', async () => {
@@ -184,7 +184,7 @@ describe('Hunches routes', () => {
 
     describe('ValidationError', () => {
 
-      const updatingHunch = hunchSampleData.createObjectWithOut('wisdom');
+      const updatingHunch = hunchDataFactory.createObjectWithOut('wisdom');
 
       it('returns status 422', async () => {
         const response = await request(app)
@@ -194,7 +194,7 @@ describe('Hunches routes', () => {
       });
 
       it('returns array of errors[] and each error has correct props', async () => {
-        const errorProps = validationErrorSampleData.getObjectProps();
+        const errorProps = validationErrorDataFactory.getObjectProps();
         const response = await request(app)
           .patch(`${baseUrl}/${hunch.id}`)
           .send(updatingHunch);
@@ -208,7 +208,7 @@ describe('Hunches routes', () => {
       it('returns status 404', async () => {
         const response = await request(app)
           .patch(`${baseUrl}/noMatchingId`)
-          .send(hunchSampleData.createObject());
+          .send(hunchDataFactory.createObject());
         expect(response.status).toBe(404);
       });
     });
@@ -222,7 +222,7 @@ describe('Hunches routes', () => {
       // post one hunch
       const response = await request(app)
         .post(baseUrl)
-        .send(hunchSampleData.createObject());
+        .send(hunchDataFactory.createObject());
       hunch = response.body;
     });
 

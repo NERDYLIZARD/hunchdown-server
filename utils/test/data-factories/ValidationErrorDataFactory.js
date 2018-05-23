@@ -1,9 +1,9 @@
 /**
  * Created on 28-Apr-18.
  */
-const SampleData = require('./SampleData');
+const DataFactory = require('./DataFactory');
 
-class ValidationErrorSampleData extends SampleData {
+class ValidationErrorDataFactory extends DataFactory {
   constructor() {
     const validationError = {
       code: null,
@@ -24,4 +24,4 @@ class ValidationErrorSampleData extends SampleData {
 
 }
 
-module.exports = ValidationErrorSampleData;
+module.exports = ValidationErrorDataFactory;

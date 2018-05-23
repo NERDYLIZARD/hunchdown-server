@@ -3,9 +3,9 @@
  */
 
 /**
- * A class of pure function that returns an object of sampleData
+ * A class of pure function that returns an object of data-factories
  */
-class SampleData {
+class DataFactory {
 
   constructor(object) {
     this.object = { ...object };
@@ -37,4 +37,4 @@ class SampleData {
 
 }
 
-module.exports = SampleData;
+module.exports = DataFactory;
