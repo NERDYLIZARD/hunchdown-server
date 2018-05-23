@@ -34,7 +34,7 @@ HunchSchema.methods.slugify = function () {
   this.slug = slug(wisdom);
 };
 
-HunchSchema.methods.toJSONFor = function () {
+HunchSchema.methods.toJSON = function () {
   return {
     id: this._id,
     slug: this.slug,

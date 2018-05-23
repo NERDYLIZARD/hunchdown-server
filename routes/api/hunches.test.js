@@ -32,33 +32,33 @@ describe('Hunches routes', () => {
   describe('GET /hunches', () => {
     describe('Success', () => {
 
-      it('should return status 200', async () => {
+      it('returns status 200', async () => {
         const response = await request(app).get(baseUrl);
         expect(response.status).toBe(200);
       });
 
-      it('should return Link header', async () => {
+      it('returns Link header', async () => {
         const response = await request(app).get(baseUrl);
         expect(response.header.link).toBeDefined();
       });
 
-      it('should return X-Current-Page header', async () => {
+      it('returns X-Current-Page header', async () => {
         const response = await request(app).get(baseUrl);
         expect(response.header['x-current-page']).toBeDefined();
         expect(response.header['x-current-page']).toBe('1');
       });
 
-      it('should return X-Total-Pages header', async () => {
+      it('returns X-Total-Pages header', async () => {
         const response = await request(app).get(baseUrl);
         expect(response.header['x-total-pages']).toBeDefined();
       });
 
-      it('should return JSON array', async () => {
+      it('returns JSON array', async () => {
         const response = await request(app).get(baseUrl);
         expect(response.body).toBeInstanceOf(Array);
       });
 
-      it('should return object with correct props', async () => {
+      it('returns object with correct props', async () => {
         const expectedProps = hunchSampleData.getObjectProps();
         const response = await request(app).get(baseUrl);
         const sampleKeys = Object.keys(response.body[0]);
@@ -72,14 +72,14 @@ describe('Hunches routes', () => {
   describe('POST /hunches', () => {
     describe('Success', () => {
 
-      it('should return status 201', async () => {
+      it('returns status 201', async () => {
         const response = await request(app)
           .post(baseUrl)
           .send(hunchSampleData.createObject());
         expect(response.status).toBe(201);
       });
 
-      it('should return Location header', async () => {
+      it('returns Location header', async () => {
         const response = await request(app)
           .post(baseUrl)
           .send(hunchSampleData.createObject());
@@ -87,7 +87,7 @@ describe('Hunches routes', () => {
         expect(typeof response.header.location).toBe('string');
       });
 
-      it('should return a hunch as resource object', async () => {
+      it('returns a hunch as resource object', async () => {
         const hunch = hunchSampleData.createObject();
         const response = await request(app)
           .post(baseUrl)
@@ -101,14 +101,14 @@ describe('Hunches routes', () => {
 
       const hunch = hunchSampleData.createObjectWithOut('wisdom');
 
-      it('should return status 422', async () => {
+      it('returns status 422', async () => {
         const response = await request(app)
           .post(baseUrl)
           .send(hunch);
         expect(response.status).toBe(422);
       });
 
-      it('should return array of errors[] and each error has correct props', async () => {
+      it('returns array of errors[] and each error has correct props', async () => {
         const errorProps = validationErrorSampleData.getObjectProps();
         const response = await request(app)
           .post(baseUrl)
@@ -123,7 +123,7 @@ describe('Hunches routes', () => {
 
   describe('GET /hunches/:hunch', () => {
 
-    let hunch = null;
+    let hunch;
     beforeAll(async () => {
       // post one hunch
       const response = await request(app)
@@ -132,17 +132,17 @@ describe('Hunches routes', () => {
       hunch = response.body;
     });
 
-    it('should return status 200', async () => {
-      const response = await request(app).get(`${baseUrl}/${hunch._id}`);
+    it('returns status 200', async () => {
+      const response = await request(app).get(`${baseUrl}/${hunch.id}`);
       expect(response.status).toBe(200);
     });
 
-    it('should return a hunch as resource object', async () => {
-      const response = await request(app).get(`${baseUrl}/${hunch._id}`);
+    it('returns a hunch as resource object', async () => {
+      const response = await request(app).get(`${baseUrl}/${hunch.id}`);
       expect(response.body).toEqual(hunch);
     });
 
-    it('should return response 404 when no hunch found', async () => {
+    it('returns response 404 when no hunch found', async () => {
       const response = await request(app).get(`${baseUrl}/noMatchingId`);
       expect(response.status).toBe(404);
     });
@@ -166,16 +166,16 @@ describe('Hunches routes', () => {
       const updatingHunch = hunchSampleData.createObject();
       updatingHunch.wisdom = 'theUpdate';
 
-      it('should return status 200', async () => {
+      it('returns status 200', async () => {
         const response = await request(app)
-          .patch(`${baseUrl}/${hunch._id}`)
+          .patch(`${baseUrl}/${hunch.id}`)
           .send(updatingHunch);
         expect(response.status).toBe(200);
       });
 
-      it('should return an updated hunch as resource object', async () => {
+      it('returns an updated hunch as resource object', async () => {
         const response = await request(app)
-          .patch(`${baseUrl}/${hunch._id}`)
+          .patch(`${baseUrl}/${hunch.id}`)
           .send(updatingHunch);
         expect(response.body.wisdom).toBe(updatingHunch.wisdom);
         expect(response.body.attribute).toBe(updatingHunch.attribute);
@@ -186,17 +186,17 @@ describe('Hunches routes', () => {
 
       const updatingHunch = hunchSampleData.createObjectWithOut('wisdom');
 
-      it('should return status 422', async () => {
+      it('returns status 422', async () => {
         const response = await request(app)
-          .patch(`${baseUrl}/${hunch._id}`)
+          .patch(`${baseUrl}/${hunch.id}`)
           .send(updatingHunch);
         expect(response.status).toBe(422);
       });
 
-      it('should return array of errors[] and each error has correct props', async () => {
+      it('returns array of errors[] and each error has correct props', async () => {
         const errorProps = validationErrorSampleData.getObjectProps();
         const response = await request(app)
-          .patch(`${baseUrl}/${hunch._id}`)
+          .patch(`${baseUrl}/${hunch.id}`)
           .send(updatingHunch);
         const sampleErrorProps = Object.keys(response.body.errors[0]);
         expect(response.body.errors).toBeInstanceOf(Array);
@@ -205,7 +205,7 @@ describe('Hunches routes', () => {
     });
 
     describe('Not Found', () => {
-      it('should return status 404', async () => {
+      it('returns status 404', async () => {
         const response = await request(app)
           .patch(`${baseUrl}/noMatchingId`)
           .send(hunchSampleData.createObject());
@@ -226,13 +226,13 @@ describe('Hunches routes', () => {
       hunch = response.body;
     });
 
-    it('should return status 204 on success', async () => {
-      const response = await request(app).delete(`${baseUrl}/${hunch._id}`);
+    it('returns status 204 on success', async () => {
+      const response = await request(app).delete(`${baseUrl}/${hunch.id}`);
       expect(response.status).toBe(204);
     });
 
-    it('should return status 404 when no hunch Found', async () => {
-      const response = await request(app).delete(`${baseUrl}/${hunch._id}`);
+    it('returns status 404 when no hunch Found', async () => {
+      const response = await request(app).delete(`${baseUrl}/${hunch.id}`);
       expect(response.status).toBe(404);
     });
   });

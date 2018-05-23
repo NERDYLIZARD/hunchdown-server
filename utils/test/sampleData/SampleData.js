@@ -32,7 +32,7 @@ class SampleData {
     return Object.keys(this.object).reduce((props, key) => {
       props.push(key);
       return props;
-    }, ['_id']);
+    }, ['id']);
   }
 
 }
