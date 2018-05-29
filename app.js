@@ -48,6 +48,7 @@ if (isDevelopment)
 /**
  * Models Registration
  */
+require('./models/Box');
 require('./models/Hunch');
 
 /**
