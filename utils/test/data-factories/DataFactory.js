@@ -21,7 +21,17 @@ class DataFactory {
 
   createObjectWithOut(prop) {
     const object = { ...this.object };
-    object[prop] = undefined;
+    switch (typeof object[prop]) {
+      case 'string':
+        object[prop] = '';
+        break;
+      case 'object':
+      case 'boolean':
+        object[prop] = {};
+        break;
+      default:
+        object[prop] = undefined;
+    }
     return object;
   }
 

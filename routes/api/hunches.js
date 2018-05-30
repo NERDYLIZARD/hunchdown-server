@@ -4,7 +4,7 @@
 const router = require('express').Router();
 const mongoose = require('mongoose');
 const errors = require('@feathersjs/errors');
-const { getFullUrl, getPaginationLink } = require('../../utils/url');
+const { getFullUrl, getPaginationUrl } = require('../../utils/url');
 
 const Hunch = mongoose.model('Hunch');
 
@@ -24,9 +24,9 @@ router.get('/', async (req, res) => {
   const totalPages = Math.ceil(totalHunches / perPage);
 
   // pagination link
-  const paginationLink = getPaginationLink(req, page, perPage, totalPages);
+  const paginationUrl = getPaginationUrl(req, page, perPage, totalPages);
 
-  res.set('Link', paginationLink);
+  res.set('Link', paginationUrl);
   res.set('X-Current-Page', page);
   res.set('X-Total-Pages', totalPages);
   res.status(200).json(hunches);
