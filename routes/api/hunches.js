@@ -32,6 +32,7 @@ router.get('/', async (req, res) => {
   res.status(200).json(hunches);
 });
 
+
 router.get('/:hunch', async (req, res, next) => {
   const id = req.params.hunch;
   const hunch = await Hunch.findById(id);
@@ -40,6 +41,7 @@ router.get('/:hunch', async (req, res, next) => {
 
   res.status(200).json(hunch);
 });
+
 
 router.post('/', async (req, res) => {
   const { wisdom, attribute } = req.body;
@@ -66,12 +68,16 @@ router.patch('/:hunch', async (req, res, next) => {
 
   if (!hunch) return next(new errors.NotFound('The hunch is not found.'));
 
-  hunch.wisdom = wisdom;
-  hunch.attribute = attribute;
+  if (typeof wisdom !== 'undefined')
+    hunch.wisdom = wisdom;
+  if (typeof attribute !== 'undefined')
+    hunch.attribute = attribute;
+
   hunch = await hunch.save();
 
   res.status(200).json(hunch);
 });
+
 
 router.delete('/:hunch', async (req, res, next) => {
   const id = req.params.hunch;

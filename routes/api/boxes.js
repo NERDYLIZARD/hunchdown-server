@@ -57,4 +57,24 @@ router.post('/', async (req, res) => {
 });
 
 
+router.patch('/:box', async (req, res, next) => {
+
+  const { title, description } = req.body;
+  const id = req.params.box;
+
+  let box = await Box.findById(id);
+
+  if (!box) return next(new errors.NotFound('The box is not found.'));
+
+  if (typeof title !== 'undefined')
+    box.title = title;
+  if (typeof description !== 'undefined')
+    box.description = description;
+
+  box = await box.save();
+
+  res.status(200).json(box);
+});
+
+
 module.exports = router;

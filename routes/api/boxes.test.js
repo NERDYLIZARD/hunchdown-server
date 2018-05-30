@@ -142,4 +142,70 @@ describe('Boxes routes', () => {
     });
   });
 
+
+  describe('PATCH /boxes/:box', () => {
+
+    let box;
+
+    beforeAll(async () => {
+      // post one box
+      const response = await request(app)
+        .post(baseUrl)
+        .send(boxDataFactory.createObject());
+      box = response.body;
+    });
+
+    describe('Success', () => {
+
+      const updatingBox = boxDataFactory.createObject();
+      updatingBox.title = 'theUpdate';
+
+      it('returns status 200', async () => {
+        const response = await request(app)
+          .patch(`${baseUrl}/${box.id}`)
+          .send(updatingBox);
+        expect(response.status).toBe(200);
+      });
+
+      it('returns an updated box as resource object', async () => {
+        const response = await request(app)
+          .patch(`${baseUrl}/${box.id}`)
+          .send(updatingBox);
+        expect(response.body.title).toBe(updatingBox.title);
+        expect(response.body.description).toBe(updatingBox.description);
+      });
+    });
+
+    describe('ValidationError', () => {
+
+      const updatingBox = boxDataFactory.createObjectWithOut('title');
+
+      it('returns status 422', async () => {
+        const response = await request(app)
+          .patch(`${baseUrl}/${box.id}`)
+          .send(updatingBox);
+        expect(response.status).toBe(422);
+      });
+
+      it('returns array of errors[] and each error has correct props', async () => {
+        const errorProps = validationErrorDataFactory.getObjectProps();
+        const response = await request(app)
+          .patch(`${baseUrl}/${box.id}`)
+          .send(updatingBox);
+        const sampleErrorProps = Object.keys(response.body.errors[0]);
+        expect(response.body.errors).toBeInstanceOf(Array);
+        errorProps.forEach(prop => expect(sampleErrorProps).toContain(prop));
+      });
+    });
+
+    describe('Not Found', () => {
+      it('returns status 404', async () => {
+        const response = await request(app)
+          .patch(`${baseUrl}/noMatchingId`)
+          .send(boxDataFactory.createObject());
+        expect(response.status).toBe(404);
+      });
+    });
+  });
+
 });
