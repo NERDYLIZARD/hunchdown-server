@@ -32,6 +32,16 @@ router.get('/', async (req, res) => {
 });
 
 
+router.get('/:box', async (req, res, next) => {
+  const id = req.params.box;
+  const box = await Box.findById(id);
+
+  if (!box) return next(new errors.NotFound('The box is not found.'));
+
+  res.status(200).json(box);
+});
+
+
 router.post('/', async (req, res) => {
   const { title, description } = req.body;
   let box = new Box({

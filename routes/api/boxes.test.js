@@ -62,6 +62,35 @@ describe('Boxes routes', () => {
     });
   });
 
+
+  describe('GET /boxes/:box', () => {
+
+    let box;
+    beforeAll(async () => {
+      // post one box
+      const response = await request(app)
+        .post(baseUrl)
+        .send(boxDataFactory.createObject());
+      box = response.body;
+    });
+
+    it('returns status 200', async () => {
+      const response = await request(app).get(`${baseUrl}/${box.id}`);
+      expect(response.status).toBe(200);
+    });
+
+    it('returns a box as resource object', async () => {
+      const response = await request(app).get(`${baseUrl}/${box.id}`);
+      expect(response.body).toEqual(box);
+    });
+
+    it('returns response 404 when no box found', async () => {
+      const response = await request(app).get(`${baseUrl}/noMatchingId`);
+      expect(response.status).toBe(404);
+    });
+  });
+
+
   describe('POST /boxes', () => {
     describe('Success', () => {
 
