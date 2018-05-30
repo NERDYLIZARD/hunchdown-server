@@ -37,19 +37,14 @@ describe('Hunches routes', () => {
         expect(response.status).toBe(200);
       });
 
-      it('returns Link header', async () => {
+      it('returns header with `Link`, `X-Current-Page` and `X-Total-Pages`', async () => {
         const response = await request(app).get(baseUrl);
-        expect(response.header.link).toBeDefined();
-      });
 
-      it('returns X-Current-Page header', async () => {
-        const response = await request(app).get(baseUrl);
+        expect(response.header.link).toBeDefined();
+
         expect(response.header['x-current-page']).toBeDefined();
         expect(response.header['x-current-page']).toBe('1');
-      });
 
-      it('returns X-Total-Pages header', async () => {
-        const response = await request(app).get(baseUrl);
         expect(response.header['x-total-pages']).toBeDefined();
       });
 

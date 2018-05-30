@@ -9,6 +9,29 @@ const { getFullUrl, getPaginationUrl } = require('../../utils/url');
 const Box = mongoose.model('Box');
 
 
+router.get('/', async (req, res) => {
+
+  const perPage = req.query.perPage ? req.query.perPage : 10;
+  const page = req.query.page ? req.query.page : 1;
+
+  // TODO: parallelize find() and count()
+  const boxes = await Box.find()
+    .limit(Number(perPage))
+    .skip(Number(perPage * (page - 1)))
+    .exec();
+
+  const totalBoxes = await Box.count();
+  const totalPages = Math.ceil(totalBoxes / perPage);
+
+  const paginationUrl = getPaginationUrl(req, page, perPage, totalPages);
+
+  res.set('Link', paginationUrl);
+  res.set('X-Current-Page', page);
+  res.set('X-Total-Pages', totalPages);
+  res.status(200).json(boxes);
+});
+
+
 router.post('/', async (req, res) => {
   const { title, description } = req.body;
   let box = new Box({

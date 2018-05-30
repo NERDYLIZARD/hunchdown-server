@@ -28,6 +28,40 @@ afterAll(async () => {
 
 describe('Boxes routes', () => {
 
+  describe('GET /boxes', () => {
+    describe('Success', () => {
+
+      it('returns status 200', async () => {
+        const response = await request(app).get(baseUrl);
+        expect(response.status).toBe(200);
+      });
+
+      it('returns header with `Link`, `X-Current-Page` and `X-Total-Pages`', async () => {
+        const response = await request(app).get(baseUrl);
+
+        expect(response.header.link).toBeDefined();
+
+        expect(response.header['x-current-page']).toBeDefined();
+        expect(response.header['x-current-page']).toBe('1');
+
+        expect(response.header['x-total-pages']).toBeDefined();
+      });
+
+      it('returns JSON array', async () => {
+        const response = await request(app).get(baseUrl);
+        expect(response.body).toBeInstanceOf(Array);
+      });
+
+      it('returns object with correct props', async () => {
+        const expectedProps = boxDataFactory.getObjectProps();
+        const response = await request(app).get(baseUrl);
+        const sampleKeys = Object.keys(response.body[0]);
+        expectedProps.forEach(key => expect(sampleKeys).toContain(key));
+      });
+
+    });
+  });
+
   describe('POST /boxes', () => {
     describe('Success', () => {
 
