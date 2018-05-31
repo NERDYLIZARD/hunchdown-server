@@ -2,6 +2,7 @@
  * Created on 19-Apr-18.
  */
 const slug = require('slug');
+const urls = require('../constants/urls');
 const mongoose = require('mongoose');
 const omitArticles = require('../utils/omitArticles');
 
@@ -40,8 +41,9 @@ HunchSchema.methods.toJSON = function () {
     id: this._id,
     slug: this.slug,
     wisdom: this.wisdom,
-    boxes: this.boxes.map(box => box._id),
     attribute: this.attribute,
+    url: `${urls.HUNCHES_URL}/${this._id}`,
+    boxesUrl: `${urls.HUNCHES_URL}/boxes`,
     createdAt: this.createdAt,
     updatedAt: this.updatedAt,
   }

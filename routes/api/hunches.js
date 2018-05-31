@@ -4,7 +4,8 @@
 const router = require('express').Router();
 const mongoose = require('mongoose');
 const errors = require('@feathersjs/errors');
-const { getFullUrl, getPaginationUrl } = require('../../utils/url');
+const { getPaginationUrl } = require('../../utils/url');
+const urls = require('../../constants/urls');
 
 const Hunch = mongoose.model('Hunch');
 const Box = mongoose.model('Box');
@@ -63,7 +64,7 @@ router.post('/', async (req, res) => {
 
   hunch = await hunch.save();
 
-  const location = `${getFullUrl(req)}/${hunch._id}`;
+  const location = `${urls.HUNCHES_URL}/${hunch._id}`;
 
   res.set('Location', location);
   res.status(201).json(hunch);
