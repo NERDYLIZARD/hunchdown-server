@@ -64,6 +64,34 @@ describe('Hunches routes', () => {
   });
 
 
+  describe('GET /hunches/:hunch', () => {
+
+    let hunch;
+    beforeAll(async () => {
+      // post one hunch
+      const response = await request(app)
+        .post(baseUrl)
+        .send(hunchDataFactory.createObject());
+      hunch = response.body;
+    });
+
+    it('returns status 200', async () => {
+      const response = await request(app).get(`${baseUrl}/${hunch.id}`);
+      expect(response.status).toBe(200);
+    });
+
+    it('returns a hunch as resource object', async () => {
+      const response = await request(app).get(`${baseUrl}/${hunch.id}`);
+      expect(response.body).toEqual(hunch);
+    });
+
+    it('returns response 404 when no hunch found', async () => {
+      const response = await request(app).get(`${baseUrl}/noMatchingId`);
+      expect(response.status).toBe(404);
+    });
+  });
+
+
   describe('POST /hunches', () => {
     describe('Success', () => {
 
@@ -112,34 +140,6 @@ describe('Hunches routes', () => {
         expect(response.body.errors).toBeInstanceOf(Array);
         errorProps.forEach(prop => expect(sampleErrorProps).toContain(prop));
       });
-    });
-  });
-
-
-  describe('GET /hunches/:hunch', () => {
-
-    let hunch;
-    beforeAll(async () => {
-      // post one hunch
-      const response = await request(app)
-        .post(baseUrl)
-        .send(hunchDataFactory.createObject());
-      hunch = response.body;
-    });
-
-    it('returns status 200', async () => {
-      const response = await request(app).get(`${baseUrl}/${hunch.id}`);
-      expect(response.status).toBe(200);
-    });
-
-    it('returns a hunch as resource object', async () => {
-      const response = await request(app).get(`${baseUrl}/${hunch.id}`);
-      expect(response.body).toEqual(hunch);
-    });
-
-    it('returns response 404 when no hunch found', async () => {
-      const response = await request(app).get(`${baseUrl}/noMatchingId`);
-      expect(response.status).toBe(404);
     });
   });
 

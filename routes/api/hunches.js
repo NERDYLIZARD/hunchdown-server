@@ -7,6 +7,7 @@ const errors = require('@feathersjs/errors');
 const { getFullUrl, getPaginationUrl } = require('../../utils/url');
 
 const Hunch = mongoose.model('Hunch');
+const Box = mongoose.model('Box');
 
 
 router.get('/', async (req, res) => {
@@ -45,11 +46,21 @@ router.get('/:hunch', async (req, res, next) => {
 
 router.post('/', async (req, res) => {
   const { wisdom, attribute } = req.body;
-
   let hunch = new Hunch({
     wisdom,
-    attribute,
+    attribute
   });
+  const boxes = await Box.find({ _id: { $in: req.body.boxes } });
+
+  // many-many relationship
+  for (let box of boxes) {
+    box.hunches.push(hunch);
+    await box.save();
+  }
+  for (let box of boxes) {
+    hunch.boxes.push(box);
+  }
+
   hunch = await hunch.save();
 
   const location = `${getFullUrl(req)}/${hunch._id}`;

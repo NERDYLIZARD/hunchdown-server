@@ -17,6 +17,7 @@ const BoxSchema = new mongoose.Schema({
   slug: { type: String, lowercase: true, maxlength: SLUG_MAX_LENGTH },
   title: { type: String, required: [true, "title is required"] },
   description: String,
+  hunches: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Hunch' }],
 }, { timestamps: true });
 
 BoxSchema.methods.toJSON = function () {

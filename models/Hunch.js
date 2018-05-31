@@ -7,7 +7,7 @@ const omitArticles = require('../utils/omitArticles');
 
 const SLUG_MAX_LENGTH = 100;
 
-const generateSlug = function(next) {
+const generateSlug = function (next) {
   if (!this.slug) {
     this.slugify();
   }
@@ -18,6 +18,7 @@ const HunchSchema = new mongoose.Schema({
   slug: { type: String, lowercase: true, maxlength: SLUG_MAX_LENGTH },
   wisdom: { type: String, required: [true, "wisdom is required"] },
   attribute: String,
+  boxes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Box' }],
 }, { timestamps: true });
 
 
@@ -39,6 +40,7 @@ HunchSchema.methods.toJSON = function () {
     id: this._id,
     slug: this.slug,
     wisdom: this.wisdom,
+    boxes: this.boxes.map(box => box._id),
     attribute: this.attribute,
     createdAt: this.createdAt,
     updatedAt: this.updatedAt,
