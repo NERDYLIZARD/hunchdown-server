@@ -2,6 +2,7 @@
  * Created on 20-Apr-18.
  */
 const router = require('express').Router();
+const _ = require('lodash');
 const mongoose = require('mongoose');
 const errors = require('@feathersjs/errors');
 const { getPaginationUrl } = require('../../utils/url');
@@ -55,11 +56,9 @@ router.post('/', async (req, res) => {
 
   // many-many relationship
   for (let box of boxes) {
+    hunch.boxes.push(box);
     box.hunches.push(hunch);
     await box.save();
-  }
-  for (let box of boxes) {
-    hunch.boxes.push(box);
   }
 
   hunch = await hunch.save();
@@ -80,13 +79,42 @@ router.patch('/:hunch', async (req, res, next) => {
 
   if (!hunch) return next(new errors.NotFound('The hunch is not found.'));
 
-  if (typeof wisdom !== 'undefined')
+  if (typeof wisdom !== 'undefined') {
     hunch.wisdom = wisdom;
-  if (typeof attribute !== 'undefined')
+  }
+
+  if (typeof attribute !== 'undefined') {
     hunch.attribute = attribute;
+  }
+
+  if (typeof req.body.boxes !== 'undefined') {
+
+    const boxes = await Box.find({ hunches: hunch });
+
+    // `id` returns stringified value of `_id`
+    const currentBoxIds = boxes.map(box => box.id);
+    const newBoxIds = req.body.boxes;
+
+    const insertingBoxIds = _.difference(newBoxIds, currentBoxIds);
+    const removingBoxIds = _.difference(currentBoxIds, newBoxIds);
+
+    const insertingBoxes = await Box.find({ _id: { $in: insertingBoxIds } });
+    const removingBoxes = await Box.find({ _id: { $in: removingBoxIds } });
+
+    // many-many relationship
+    for (let removingBox of removingBoxes) {
+      hunch.boxes.remove(removingBox);
+      removingBox.hunches.remove(hunch);
+      await removingBox.save();
+    }
+    for (let insertingBox of insertingBoxes) {
+      hunch.boxes.push(insertingBox);
+      insertingBox.hunches.push(hunch);
+      await insertingBox.save();
+    }
+  }
 
   hunch = await hunch.save();
-
   res.status(200).json(hunch);
 });
 

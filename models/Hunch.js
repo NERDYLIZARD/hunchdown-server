@@ -42,6 +42,7 @@ HunchSchema.methods.toJSON = function () {
     slug: this.slug,
     wisdom: this.wisdom,
     attribute: this.attribute,
+    boxes: this.boxes,
     url: `${urls.HUNCHES_URL}/${this._id}`,
     boxesUrl: `${urls.HUNCHES_URL}/boxes`,
     createdAt: this.createdAt,

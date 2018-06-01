@@ -14,6 +14,12 @@ const validationErrorDataFactory = new ValidationErrorDataFactory();
 
 jest.setTimeout(100000); // 100 second timeout
 
+const postHunch = async () => {
+  const response = await request(app)
+    .post(baseUrl)
+    .send(hunchDataFactory.createObject());
+  return response.body;
+};
 
 beforeAll(async () => {
   await connectDatabase();
@@ -69,10 +75,7 @@ describe('Hunches routes', () => {
     let hunch;
     beforeAll(async () => {
       // post one hunch
-      const response = await request(app)
-        .post(baseUrl)
-        .send(hunchDataFactory.createObject());
-      hunch = response.body;
+      hunch = await postHunch();
     });
 
     it('returns status 200', async () => {
@@ -149,11 +152,7 @@ describe('Hunches routes', () => {
     let hunch;
 
     beforeAll(async () => {
-      // post one hunch
-      const response = await request(app)
-        .post(baseUrl)
-        .send(hunchDataFactory.createObject());
-      hunch = response.body;
+      hunch = await postHunch();
     });
 
     describe('Success', () => {
@@ -212,13 +211,9 @@ describe('Hunches routes', () => {
 
   describe('DELETE /hunches/:hunch', () => {
 
-    let hunch = null;
+    let hunch;
     beforeAll(async () => {
-      // post one hunch
-      const response = await request(app)
-        .post(baseUrl)
-        .send(hunchDataFactory.createObject());
-      hunch = response.body;
+      hunch = await postHunch();
     });
 
     it('returns status 204 on success', async () => {
