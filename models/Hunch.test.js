@@ -56,15 +56,22 @@ describe('Hunch Model', () => {
 
     describe('`slugify()`', () => {
 
+      beforeAll(() => {
+        jest.mock('../utils/omitArticles', () => jest.fn(str => str));
+        jest.mock('slug', () => jest.fn());
+      });
+
+      afterAll(() => {
+        jest.unmock('../utils/omitArticles');
+        jest.unmock('slug');
+      });
+
       describe('when `wisdom` is defined', () => {
 
         it('calls `omitArticles()` and `slug`', () => {
           jest.resetModules();
 
-          jest.mock('../utils/omitArticles', () => jest.fn(str => str));
           const omitArticles = require('../utils/omitArticles');
-
-          jest.mock('slug', () => jest.fn());
           const slug = require('slug');
 
           const Hunch = require('./Hunch');
@@ -78,12 +85,10 @@ describe('Hunch Model', () => {
 
       describe('when `wisdom` is not defined', () => {
 
-        it('return immediately', () => {
+        it('returns immediately', () => {
           jest.resetModules();
-          jest.mock('../utils/omitArticles', () => jest.fn(str => str));
-          const omitArticles = require('../utils/omitArticles');
 
-          jest.mock('slug', () => jest.fn());
+          const omitArticles = require('../utils/omitArticles');
           const slug = require('slug');
 
           const Hunch = require('./Hunch');
