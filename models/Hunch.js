@@ -26,9 +26,9 @@ const HunchSchema = new mongoose.Schema({
 HunchSchema.pre('validate', generateSlug);
 
 HunchSchema.methods.slugify = function () {
-  // wisdom is always string
-  if (this.wisdom === undefined)
-    this.wisdom = '';
+  if (!this.wisdom)
+    return;
+
   let wisdom = this.wisdom;
   wisdom = omitArticles(wisdom);
   wisdom = wisdom.substr(0, SLUG_MAX_LENGTH);

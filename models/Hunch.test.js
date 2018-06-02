@@ -6,8 +6,6 @@ const HunchDataFactory = require('../utils/test/data-factories/HunchDataFactory'
 
 const hunchDataFactory = new HunchDataFactory();
 
-const omitArticles = require('../utils/omitArticles');
-jest.mock('../utils/omitArticles', () => jest.fn(str => str));
 
 describe('Hunch Model', () => {
   /**
@@ -27,7 +25,6 @@ describe('Hunch Model', () => {
       });
 
       it('always calls next()', () => {
-        hunch.slug = undefined;
         generateSlug(next);
         expect(next).toBeCalled();
       });
@@ -52,16 +49,56 @@ describe('Hunch Model', () => {
   });
 
 
-  describe('methods', () => {
-    describe('`slugify()`', () => {
-      const hunch = new Hunch(hunchDataFactory.createObject());
+  /**
+   * Instance Methods
+   */
+  describe('Hunch Instance Methods', () => {
 
-      it('calls `omitArticles()`', () => {
-        hunch.slugify();
-        expect(omitArticles).toBeCalled();
+    describe('`slugify()`', () => {
+
+      describe('when `wisdom` is defined', () => {
+
+        it('calls `omitArticles()` and `slug`', () => {
+          jest.resetModules();
+
+          jest.mock('../utils/omitArticles', () => jest.fn(str => str));
+          const omitArticles = require('../utils/omitArticles');
+
+          jest.mock('slug', () => jest.fn());
+          const slug = require('slug');
+
+          const Hunch = require('./Hunch');
+          const hunch = new Hunch(hunchDataFactory.createObject());
+
+          hunch.slugify();
+          expect(omitArticles).toBeCalled();
+          expect(slug).toBeCalled();
+        });
       });
+
+      describe('when `wisdom` is not defined', () => {
+
+        it('return immediately', () => {
+          jest.resetModules();
+          jest.mock('../utils/omitArticles', () => jest.fn(str => str));
+          const omitArticles = require('../utils/omitArticles');
+
+          jest.mock('slug', () => jest.fn());
+          const slug = require('slug');
+
+          const Hunch = require('./Hunch');
+          const hunch = new Hunch(hunchDataFactory.createObjectWithOut('wisdom'));
+
+          hunch.slugify();
+          expect(omitArticles).not.toBeCalled();
+          expect(slug).not.toBeCalled();
+        });
+      });
+
     });
+
   });
 
-
 });
+
+
