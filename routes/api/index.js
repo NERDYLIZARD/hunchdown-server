@@ -3,7 +3,7 @@
  */
 const router = require('express').Router();
 const MongooseError = require('mongoose').Error;
-const ValidationError = require('../../utils/ValidationError');
+const ValidationError = require('../../utils/validation-error');
 
 
 /**

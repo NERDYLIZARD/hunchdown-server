@@ -3,7 +3,7 @@
  */
 const request = require('supertest');
 const app = require('../../app');
-const { connectDatabase, disconnectDatabase } = require('../../utils/test/testHelper');
+const { connectDatabase, disconnectDatabase } = require('../../utils/test/helpers');
 const HunchDataFactory = require('../../utils/test/data-factories/HunchDataFactory');
 const ValidationErrorDataFactory = require('../../utils/test/data-factories/ValidationErrorDataFactory');
 
