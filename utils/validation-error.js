@@ -4,10 +4,10 @@
 const { FeathersError } = require('@feathersjs/errors');
 
 const errorCodes = {
-  MISSING: 'Missing',
-  MISSING_FIELD: 'MissingField',
-  INVALID: 'Invalid',
-  ALREADY_EXISTS: 'AlreadyExists',
+  MISSING: 'MISSING',
+  MISSING_FIELD: 'MISSING_FIELD',
+  INVALID: 'INVALID',
+  ALREADY_EXISTS: 'ALREADY_EXISTS',
 };
 
 /**

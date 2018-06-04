@@ -7,7 +7,7 @@ const { connectDatabase, disconnectDatabase } = require('../../utils/test/helper
 const HunchDataFactory = require('../../utils/test/data-factories/HunchDataFactory');
 const ValidationErrorDataFactory = require('../../utils/test/data-factories/ValidationErrorDataFactory');
 
-const Hunch = require('../../models/Hunch');
+const Hunch = require('../../models/hunch');
 const baseUrl = '/api/hunches';
 const hunchDataFactory = new HunchDataFactory();
 const validationErrorDataFactory = new ValidationErrorDataFactory();

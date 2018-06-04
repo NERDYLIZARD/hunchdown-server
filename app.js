@@ -48,8 +48,8 @@ if (isDevelopment)
 /**
  * Models Registration
  */
-require('./models/Box');
-require('./models/Hunch');
+require('./models/box');
+require('./models/hunch');
 
 /**
  * Routers

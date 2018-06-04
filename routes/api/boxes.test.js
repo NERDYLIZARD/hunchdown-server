@@ -7,7 +7,7 @@ const { connectDatabase, disconnectDatabase } = require('../../utils/test/helper
 const BoxDataFactory = require('../../utils/test/data-factories/BoxDataFactory');
 const ValidationErrorDataFactory = require('../../utils/test/data-factories/ValidationErrorDataFactory');
 
-const Box = require('../../models/Box');
+const Box = require('../../models/box');
 const baseUrl = '/api/boxes';
 const boxDataFactory = new BoxDataFactory();
 const validationErrorDataFactory = new ValidationErrorDataFactory();

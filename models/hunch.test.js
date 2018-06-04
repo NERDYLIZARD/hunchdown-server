@@ -1,7 +1,7 @@
 /**
  * Created on 08-May-18.
  */
-const Hunch = require('./Hunch');
+const Hunch = require('./hunch');
 const HunchDataFactory = require('../utils/test/data-factories/HunchDataFactory');
 
 const hunchDataFactory = new HunchDataFactory();
@@ -74,7 +74,7 @@ describe('Hunch Model', () => {
           const omitArticles = require('../utils/omit-articles');
           const slug = require('slug');
 
-          const Hunch = require('./Hunch');
+          const Hunch = require('./hunch');
           const hunch = new Hunch(hunchDataFactory.createObject());
 
           hunch.slugify();
@@ -91,7 +91,7 @@ describe('Hunch Model', () => {
           const omitArticles = require('../utils/omit-articles');
           const slug = require('slug');
 
-          const Hunch = require('./Hunch');
+          const Hunch = require('./hunch');
           const hunch = new Hunch(hunchDataFactory.createObjectWithOut('wisdom'));
 
           hunch.slugify();
