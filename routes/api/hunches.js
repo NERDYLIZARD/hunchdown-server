@@ -13,18 +13,38 @@ const Hunch = mongoose.model('Hunch');
 const Box = mongoose.model('Box');
 
 
-router.get('/', async (req, res) => {
+router.get('/', query.fields, query.embeds, async (req, res) => {
 
-  const perPage = req.query.perPage ? req.query.perPage : 10;
+  const perPage = req.query.perPage ? req.query.perPage : 12;
   const page = req.query.page ? req.query.page : 1;
 
-  // TODO: parallelize find() and count()
-  const hunches = await Hunch.find()
+  // find hunches with pagination
+  let findHunches = Hunch.find()
     .limit(Number(perPage))
-    .skip(Number(perPage * (page - 1)))
-    .exec();
+    .skip(Number(perPage * (page - 1)));
 
-  const totalHunches = await Hunch.count();
+  // select only the sparse fields
+  if (req.fields) {
+    findHunches = findHunches.select(req.fields);
+  }
+
+  // populate embedded resources and their fields
+  if (req.embeds) {
+    req.embeds.forEach(embed => {
+      findHunches = findHunches.populate({
+        path: embed.resource,
+        select: embed.fields
+      });
+    });
+  }
+
+  const getTotalHunches = Hunch.count();
+
+  const results = await Promise.all([findHunches.exec(), getTotalHunches.exec()]);
+
+  const hunches = results[0];
+  const totalHunches = results[1];
+
   const totalPages = Math.ceil(totalHunches / perPage);
 
   // pagination link
