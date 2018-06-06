@@ -135,6 +135,7 @@ router.patch('/:hunch', async (req, res, next) => {
     const insertingBoxes = await Box.find({ _id: { $in: insertingBoxIds } });
     const removingBoxes = await Box.find({ _id: { $in: removingBoxIds } });
 
+    // TODO: modularize many-many relationship both add(push) and remove(pull) e.g. function many(hunch, boxes) { ... }
     // many-many relationship
     if (removingBoxes) {
       for (let removingBox of removingBoxes) {

@@ -25,11 +25,13 @@ module.exports.embeds = function (req, res, next) {
     return accumulator;
   }, {});
 
-  req.embeds = Object.keys(embeds).reduce((accumulator, key) =>
-    accumulator.concat({
+  req.embeds = Object.keys(embeds).reduce((accumulator, key) => {
+    accumulator.push({
       resource: key,
       fields: embeds[key].join(' ')
-    }), []);
+    });
+    return accumulator;
+  }, []);
 
   next();
 };
