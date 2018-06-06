@@ -7,6 +7,7 @@ const mongoose = require('mongoose');
 const errors = require('@feathersjs/errors');
 const { getPaginationUrl } = require('../../utils/url');
 const urls = require('../../constants/urls');
+const query = require('../../middlewares/query');
 
 const Hunch = mongoose.model('Hunch');
 const Box = mongoose.model('Box');
@@ -35,10 +36,26 @@ router.get('/', async (req, res) => {
   res.status(200).json(hunches);
 });
 
-
-router.get('/:hunch', async (req, res, next) => {
+router.get('/:hunch', query.fields, query.embeds, async (req, res, next) => {
   const id = req.params.hunch;
-  const hunch = await Hunch.findById(id);
+
+  let findHunch = Hunch.findById(id);
+
+  // select only the sparse fields
+  if (req.fields) {
+    findHunch = findHunch.select(req.fields);
+  }
+
+  // populate embedded resources and their fields
+  if (req.embeds) {
+    req.embeds.forEach(embed => {
+      findHunch = findHunch.populate({
+        path: embed.resource,
+        select: embed.fields
+      });
+    });
+  }
+  const hunch = await findHunch.exec();
 
   if (!hunch) return next(new errors.NotFound('The hunch is not found.'));
 
@@ -102,15 +119,19 @@ router.patch('/:hunch', async (req, res, next) => {
     const removingBoxes = await Box.find({ _id: { $in: removingBoxIds } });
 
     // many-many relationship
-    for (let removingBox of removingBoxes) {
-      hunch.boxes.remove(removingBox);
-      removingBox.hunches.remove(hunch);
-      await removingBox.save();
+    if (removingBoxes) {
+      for (let removingBox of removingBoxes) {
+        hunch.boxes.pull(removingBox);
+        removingBox.hunches.pull(hunch);
+        await removingBox.save();
+      }
     }
-    for (let insertingBox of insertingBoxes) {
-      hunch.boxes.push(insertingBox);
-      insertingBox.hunches.push(hunch);
-      await insertingBox.save();
+    if (insertingBoxes) {
+      for (let insertingBox of insertingBoxes) {
+        hunch.boxes.push(insertingBox);
+        insertingBox.hunches.push(hunch);
+        await insertingBox.save();
+      }
     }
   }
 
