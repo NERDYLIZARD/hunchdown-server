@@ -40,10 +40,7 @@ router.get('/', query.fields, query.embeds, async (req, res) => {
 
   const getTotalHunches = Hunch.count();
 
-  const results = await Promise.all([findHunches.exec(), getTotalHunches.exec()]);
-
-  const hunches = results[0];
-  const totalHunches = results[1];
+  const [hunches, totalHunches] = await Promise.all([findHunches.exec(), getTotalHunches.exec()]);
 
   const totalPages = Math.ceil(totalHunches / perPage);
 
