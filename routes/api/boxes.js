@@ -123,6 +123,32 @@ router.get('/:box/hunches', async (req, res) => {
 });
 
 
+/**
+ * Add hunches into the box.
+ * input string[] req.body.hunches (array of hunch's ids)
+ */
+router.patch('/:box/hunches', async (req, res) => {
+  const id = req.params.box;
+  let box = await Box.findById(id);
+  if(!box) throw new errors.NotFound('The box is not found.');
+
+  const hunchIds = req.body.hunches;
+  const hunches = await Hunch.find({ _id: { $in: hunchIds }});
+
+  const saveHunches = [];
+  hunches.forEach(hunch => {
+    hunch.boxes.push(box);
+    box.hunches.push(hunch);
+    saveHunches.push(hunch.save());
+  });
+
+  await Promise.all(saveHunches);
+  box = await box.save();
+
+  res.status(200).json(box);
+});
+
+
 router.delete('/:box', async (req, res) => {
   const id = req.params.box;
   const box = await Box.findById(id);
