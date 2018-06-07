@@ -52,11 +52,28 @@ router.get('/', query.fields, query.embeds, async (req, res) => {
 });
 
 
-router.get('/:box', async (req, res, next) => {
+router.get('/:box', query.fields, query.embeds, async (req, res) => {
   const id = req.params.box;
-  const box = await Box.findById(id);
 
-  if (!box) return next(new errors.NotFound('The box is not found.'));
+  let findBox = Box.findById(id);
+
+  // select only the sparse fields
+  if (req.fields) {
+    findBox = findBox.select(req.fields);
+  }
+
+  // populate embedded resources and their fields
+  if (req.embeds) {
+    req.embeds.forEach(embed => {
+      findBox = findBox.populate({
+        path: embed.resource,
+        select: embed.fields
+      });
+    });
+  }
+  const box = await findBox.exec();
+
+  if (!box) throw new errors.NotFound('The box is not found.');
 
   res.status(200).json(box);
 });
@@ -77,13 +94,13 @@ router.post('/', async (req, res) => {
 });
 
 
-router.patch('/:box', async (req, res, next) => {
+router.patch('/:box', async (req, res) => {
   const { title, description } = req.body;
   const id = req.params.box;
 
   let box = await Box.findById(id);
 
-  if (!box) return next(new errors.NotFound('The box is not found.'));
+  if (!box) throw new errors.NotFound('The box is not found.');
 
   if (typeof title !== 'undefined')
     box.title = title;
