@@ -5,23 +5,42 @@ const router = require('express').Router();
 const mongoose = require('mongoose');
 const errors = require('@feathersjs/errors');
 const { getFullUrl, getPaginationUrl } = require('../../utils/url');
+const query = require('../../middlewares/query');
+
 
 const Box = mongoose.model('Box');
 const Hunch = mongoose.model('Hunch');
 
 
-router.get('/', async (req, res) => {
+router.get('/', query.fields, query.embeds, async (req, res) => {
 
-  const perPage = req.query.perPage ? req.query.perPage : 10;
+  const perPage = req.query.perPage ? req.query.perPage : 12;
   const page = req.query.page ? req.query.page : 1;
 
-  // TODO: parallelize find() and count()
-  const boxes = await Box.find()
+  // find hunches with pagination
+  let findBoxes = Box.find()
     .limit(Number(perPage))
-    .skip(Number(perPage * (page - 1)))
-    .exec();
+    .skip(Number(perPage * (page - 1)));
 
-  const totalBoxes = await Box.count();
+  // select only the sparse fields
+  if (req.fields) {
+    findBoxes = findBoxes.select(req.fields);
+  }
+
+  // populate embedded resources and their fields
+  if (req.embeds) {
+    req.embeds.forEach(embed => {
+      findBoxes = findBoxes.populate({
+        path: embed.resource,
+        select: embed.fields
+      });
+    });
+  }
+
+  const getTotalBoxes = Box.count();
+
+  const [boxes, totalBoxes] = await Promise.all([findBoxes.exec(), getTotalBoxes.exec()]);
+
   const totalPages = Math.ceil(totalBoxes / perPage);
 
   const paginationUrl = getPaginationUrl(req, page, perPage, totalPages);

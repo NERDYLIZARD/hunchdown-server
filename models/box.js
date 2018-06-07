@@ -26,6 +26,7 @@ BoxSchema.methods.toJSON = function () {
     slug: this.slug,
     title: this.title,
     description: this.description,
+    hunches: this.hunches,
     createdAt: this.createdAt,
     updatedAt: this.updatedAt,
   }
