@@ -86,14 +86,14 @@ router.post('/', async (req, res) => {
     wisdom,
     attribute
   });
-  const boxes = await Box.find({ _id: { $in: req.body.boxes } });
 
   // many-many relationship
-  for (let box of boxes) {
+  const boxes = await Box.find({ _id: { $in: req.body.boxes } });
+  await Promise.all(boxes.map(box => {
     hunch.boxes.push(box);
     box.hunches.push(hunch);
-    await box.save();
-  }
+    return box.save();
+  }));
 
   hunch = await hunch.save();
 
