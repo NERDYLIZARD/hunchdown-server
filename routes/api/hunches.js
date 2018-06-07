@@ -129,28 +129,32 @@ router.patch('/:hunch', async (req, res) => {
     const currentBoxIds = boxes.map(box => box.id);
     const newBoxIds = req.body.boxes;
 
-    const insertingBoxIds = _.difference(newBoxIds, currentBoxIds);
     const removingBoxIds = _.difference(currentBoxIds, newBoxIds);
+    const insertingBoxIds = _.difference(newBoxIds, currentBoxIds);
 
-    const insertingBoxes = await Box.find({ _id: { $in: insertingBoxIds } });
-    const removingBoxes = await Box.find({ _id: { $in: removingBoxIds } });
+    const [removingBoxes, insertingBoxes] = await Promise.all([
+      Box.find({ _id: { $in: removingBoxIds } }),
+      Box.find({ _id: { $in: insertingBoxIds } })
+    ]);
 
     // TODO: modularize many-many relationship both add(push) and remove(pull) e.g. function many(hunch, boxes) { ... }
     // many-many relationship
+    const saveBoxes = [];
     if (removingBoxes) {
-      for (let removingBox of removingBoxes) {
+      removingBoxes.forEach(removingBox => {
         hunch.boxes.pull(removingBox);
         removingBox.hunches.pull(hunch);
-        await removingBox.save();
-      }
+        saveBoxes.push(removingBox.save());
+      });
     }
     if (insertingBoxes) {
-      for (let insertingBox of insertingBoxes) {
+      insertingBoxes.forEach(insertingBox => {
         hunch.boxes.push(insertingBox);
         insertingBox.hunches.push(hunch);
-        await insertingBox.save();
-      }
+        saveBoxes.push(insertingBox.save());
+      })
     }
+    await Promise.all(saveBoxes);
   }
 
   hunch = await hunch.save();
