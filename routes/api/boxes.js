@@ -7,7 +7,6 @@ const errors = require('@feathersjs/errors');
 const { getFullUrl, getPaginationUrl } = require('../../utils/url');
 const query = require('../../middlewares/query');
 
-
 const Box = mongoose.model('Box');
 const Hunch = mongoose.model('Hunch');
 
@@ -113,7 +112,6 @@ router.patch('/:box', async (req, res) => {
 });
 
 
-
 router.get('/:box/hunches', async (req, res) => {
   const boxId = req.params.box;
   const hunches = await Hunch.find({ boxes: boxId });
@@ -122,6 +120,17 @@ router.get('/:box/hunches', async (req, res) => {
     throw new errors.NotFound('The hunches are not found.');
 
   res.status(200).json(hunches);
+});
+
+
+router.delete('/:box', async (req, res) => {
+  const id = req.params.box;
+  const box = await Box.findById(id);
+
+  if (!box) throw new errors.NotFound('The box is not found.');
+
+  await box.remove();
+  res.sendStatus(204);
 });
 
 

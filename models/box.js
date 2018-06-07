@@ -4,12 +4,25 @@
 const slug = require('slug');
 const mongoose = require('mongoose');
 
+const Hunch = require('./hunch');
+
 const SLUG_MAX_LENGTH = 50;
 
 const generateSlug = function(next) {
   if (!this.slug) {
     this.slugify();
   }
+  next();
+};
+
+const removeBoxFromHunches = async function (box, next) {
+  const hunches = await Hunch.find({ _id: { $in: box.hunches } });
+  const promises = [];
+  for (let hunch of hunches) {
+    hunch.boxes.pull(box);
+    promises.push(hunch.save());
+  }
+  await Promise.all(promises);
   next();
 };
 
@@ -33,6 +46,8 @@ BoxSchema.methods.toJSON = function () {
 };
 
 BoxSchema.pre('validate', generateSlug);
+
+BoxSchema.post('remove', removeBoxFromHunches);
 
 BoxSchema.methods.slugify = function() {
   this.slug = slug(this.title) + '-' + (Math.random() * Math.pow(36, 6) | 0).toString(36);
