@@ -7,6 +7,7 @@ const errors = require('@feathersjs/errors');
 const { getFullUrl, getPaginationUrl } = require('../../utils/url');
 
 const Box = mongoose.model('Box');
+const Hunch = mongoose.model('Hunch');
 
 
 router.get('/', async (req, res) => {
@@ -58,7 +59,6 @@ router.post('/', async (req, res) => {
 
 
 router.patch('/:box', async (req, res, next) => {
-
   const { title, description } = req.body;
   const id = req.params.box;
 
@@ -74,6 +74,18 @@ router.patch('/:box', async (req, res, next) => {
   box = await box.save();
 
   res.status(200).json(box);
+});
+
+
+
+router.get('/:box/hunches', async (req, res) => {
+  const boxId = req.params.box;
+  const hunches = await Hunch.find({ boxes: boxId });
+
+  if (!hunches.length)
+    throw new errors.NotFound('The hunches are not found.');
+
+  res.status(200).json(hunches);
 });
 
 
