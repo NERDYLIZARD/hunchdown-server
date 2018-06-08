@@ -6,8 +6,6 @@ const urls = require('../constants/urls');
 const mongoose = require('mongoose');
 const omitArticles = require('../utils/omit-articles');
 
-const Box = require('./box');
-
 const SLUG_MAX_LENGTH = 100;
 
 const generateSlug = function (next) {
@@ -18,15 +16,16 @@ const generateSlug = function (next) {
 };
 
 const removeHunchFromBoxes = async function (hunch, next) {
-  const boxes = await Box.find({ _id: { $in: hunch.boxes } });
-  const promises = [];
-  for (let box of boxes) {
+  const boxes = await mongoose.model('Box').find({ _id: { $in: hunch.boxes } });
+
+  await Promise.all(boxes.map(box => {
     box.hunches.pull(hunch);
-    promises.push(box.save());
-  }
-  await Promise.all(promises);
+    return box.save();
+  }));
+
   next();
 };
+
 
 const HunchSchema = new mongoose.Schema({
   slug: { type: String, lowercase: true, maxlength: SLUG_MAX_LENGTH },
@@ -39,7 +38,6 @@ const HunchSchema = new mongoose.Schema({
 HunchSchema.pre('validate', generateSlug);
 
 HunchSchema.post('remove', removeHunchFromBoxes);
-
 
 HunchSchema.methods.slugify = function () {
   if (!this.wisdom)
@@ -66,7 +64,6 @@ HunchSchema.methods.toJSON = function () {
   }
 };
 
-HunchSchema.statics.SLUG_MAX_LENGTH = SLUG_MAX_LENGTH;
 
 module.exports = mongoose.model('Hunch', HunchSchema);
 

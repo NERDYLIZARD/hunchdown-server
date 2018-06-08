@@ -3,11 +3,11 @@
  */
 const request = require('supertest');
 const app = require('../../app');
-const { connectDatabase, disconnectDatabase } = require('../../utils/test/helpers');
+const { mongoose, connectDatabase, disconnectDatabase } = require('../../utils/test/helpers');
 const HunchDataFactory = require('../../utils/test/data-factories/HunchDataFactory');
 const ValidationErrorDataFactory = require('../../utils/test/data-factories/ValidationErrorDataFactory');
 
-const Hunch = require('../../models/hunch');
+const Hunch = mongoose.model('Hunch');
 const baseUrl = '/api/hunches';
 const hunchDataFactory = new HunchDataFactory();
 const validationErrorDataFactory = new ValidationErrorDataFactory();

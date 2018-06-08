@@ -3,11 +3,11 @@
  */
 const request = require('supertest');
 const app = require('../../app');
-const { connectDatabase, disconnectDatabase } = require('../../utils/test/helpers');
+const { mongoose, connectDatabase, disconnectDatabase } = require('../../utils/test/helpers');
 const BoxDataFactory = require('../../utils/test/data-factories/BoxDataFactory');
 const ValidationErrorDataFactory = require('../../utils/test/data-factories/ValidationErrorDataFactory');
 
-const Box = require('../../models/box');
+const Box = mongoose.model('Box');
 const baseUrl = '/api/boxes';
 const boxDataFactory = new BoxDataFactory();
 const validationErrorDataFactory = new ValidationErrorDataFactory();
