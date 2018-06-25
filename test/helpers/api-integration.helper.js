@@ -1,12 +1,16 @@
 /**
  * Created on 25-Jun-18.
  */
-const { connectDatabase, disconnectDatabase } = require('../../utils/test/helpers');
+const { connectDatabase, disconnectDatabase } = require('./mongo.helper');
 
-before(async () => {
-  await connectDatabase();
+before((done) => {
+  connectDatabase()
+    .then(() => done())
+    .catch(done);
 });
 
-after(async () => {
-  await disconnectDatabase();
+after((done) => {
+  disconnectDatabase()
+    .then(() => done())
+    .catch(done);
 });

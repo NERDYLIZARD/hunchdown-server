@@ -3,7 +3,8 @@
  */
 const request = require('supertest');
 const app = require('../../app');
-const { mongoose, connectDatabase, disconnectDatabase } = require('../../utils/test/helpers');
+const mongoose = require('mongoose');
+const { connectDatabase, disconnectDatabase } = require('../../test/helpers/mongo.helper');
 const BoxDataFactory = require('../../utils/test/data-factories/BoxDataFactory');
 const ValidationErrorDataFactory = require('../../utils/test/data-factories/ValidationErrorDataFactory');
 

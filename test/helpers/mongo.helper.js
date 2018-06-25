@@ -5,9 +5,9 @@ const mongoose = require('mongoose');
 const Mockgoose = require('mockgoose').Mockgoose;
 
 // allow parallel tests on mockgoose
-Mockgoose.prototype.prepareStorage = function() {
+Mockgoose.prototype.prepareStorage = function () {
   const _this = this;
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     Promise.all([_this.getTempDBPath(), _this.getOpenPort()]).then(promiseValues => {
       const dbPath = promiseValues[0];
       const openPort = promiseValues[1].toString();
@@ -25,20 +25,23 @@ Mockgoose.prototype.prepareStorage = function() {
 
 const mockgoose = new Mockgoose(mongoose);
 
-module.exports = {
-
-  mongoose,
-
-  connectDatabase: async () => {
+module.exports.connectDatabase = async function () {
+  try {
     await mockgoose.prepareStorage();
     await mongoose.connect('test');
-  },
+  } catch (e) {
+    throw e;
+  }
+};
 
-  disconnectDatabase: async () => {
+module.exports.disconnectDatabase = async function () {
+  try {
     mongoose.models = {};
     mongoose.modelSchemas = {};
     await mockgoose.helper.reset();
-    await mongoose.disconnect();
-  },
-
+    await mongoose.connection.dropDatabase();
+    await mongoose.connection.close();
+  } catch (e) {
+    throw e;
+  }
 };
