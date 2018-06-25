@@ -1,0 +1,7 @@
+--colors
+--reporter spec
+--timeout 8000
+--check-leaks
+--globals io
+--require ./test/helpers/globals.helper
+--exit

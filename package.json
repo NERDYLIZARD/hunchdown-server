@@ -9,7 +9,9 @@
     "dev": "nodemon ./bin/www",
     "start": "npm run dev",
     "test": "cross-env NODE_ENV=test jest",
-    "test:watch": "npm run test -- --watch"
+    "test:watch": "npm run test -- --watch",
+    "mocha": "cross-env NODE_ENV=test mocha test/api/integration --recursive",
+    "mocha:watch": "npm run mocha -- --watch"
   },
   "dependencies": {
     "@feathersjs/errors": "^3.3.0",
@@ -31,13 +33,19 @@
     "slug": "^0.9.1"
   },
   "devDependencies": {
+    "chai": "^4.1.2",
+    "chai-as-promised": "^7.1.1",
     "concurrently": "^3.5.1",
     "cross-env": "^5.1.4",
     "dotenv": "^5.0.1",
     "faker": "^4.1.0",
     "jest": "^22.4.3",
+    "mocha": "^5.2.0",
     "mockgoose": "^7.3.5",
     "nodemon": "^1.17.3",
+    "sinon": "^6.0.1",
+    "sinon-chai": "^3.2.0",
+    "sinon-stub-promise": "^4.0.0",
     "supertest": "^3.0.0"
   }
 }
