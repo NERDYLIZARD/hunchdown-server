@@ -28,7 +28,7 @@ const mockgoose = new Mockgoose(mongoose);
 module.exports.connectDatabase = async function () {
   try {
     await mockgoose.prepareStorage();
-    await mongoose.connect('test');
+    await mongoose.connect('localhost:27017/hunchdown-test');
   } catch (e) {
     throw e;
   }
@@ -45,3 +45,27 @@ module.exports.disconnectDatabase = async function () {
     throw e;
   }
 };
+
+
+module.exports.updateDocument = async function (collectionName, doc, update) {
+  let collection = mongoose.connection.db.collection(collectionName);
+
+  return new Promise((resolve) => {
+    collection.updateOne({ _id: doc._id }, { $set: update }, (updateErr) => {
+      if (updateErr) throw new Error(`Error updating ${collectionName}: ${updateErr}`);
+      resolve();
+    });
+  });
+};
+
+module.exports.getDocument = async function (collectionName, doc) {
+  let collection = mongoose.connection.db.collection(collectionName);
+
+  return new Promise((resolve) => {
+    collection.findOne({ _id: doc._id }, (lookupErr, found) => {
+      if (lookupErr) throw new Error(`Error looking up ${collectionName}: ${lookupErr}`);
+      resolve(found);
+    });
+  });
+};
+

@@ -19,7 +19,9 @@ function _requestMaker (method) {
   return (route, send, query) => {
     return new Promise((resolve, reject) => {
 
-      let request = supertest(app)[method](route)
+      let url = `/api${route}`;
+
+      let request = supertest(app)[method](url)
         .accept('application/json');
 
       request

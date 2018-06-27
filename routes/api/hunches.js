@@ -87,6 +87,7 @@ router.post('/', async (req, res) => {
     attribute
   });
 
+  // TODO add constraint: a box is required to create hunch,
   // many-many relationship
   const boxes = await Box.find({ _id: { $in: req.body.boxes } });
   await Promise.all(boxes.map(box => {

@@ -1,7 +1,7 @@
 /**
  * Created on 25-Jun-18.
  */
-const { connectDatabase, disconnectDatabase } = require('./mongo.helper');
+const { connectDatabase, disconnectDatabase } = require('./mongo');
 
 before((done) => {
   connectDatabase()

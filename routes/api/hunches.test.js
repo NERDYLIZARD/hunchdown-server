@@ -4,7 +4,7 @@
 const request = require('supertest');
 const app = require('../../app');
 const mongoose = require('mongoose');
-const { connectDatabase, disconnectDatabase } = require('../../test/helpers/mongo.helper');
+const { connectDatabase, disconnectDatabase } = require('../../test/helpers/mongo');
 const HunchDataFactory = require('../../utils/test/data-factories/HunchDataFactory');
 const ValidationErrorDataFactory = require('../../utils/test/data-factories/ValidationErrorDataFactory');
 

@@ -2,32 +2,24 @@
  * Created on 25-Jun-18.
  */
 require('../../../helpers/api-integration.helper');
-const HunchDataFactory = require('../../../../utils/test/data-factories/HunchDataFactory');
 const requester = require('../../../helpers/api-integration/requester');
-
-const Hunch = require('../../../../models/hunch');
-const hunchDataFactory = new HunchDataFactory();
-
-before(async () => {
-  // seed a hunch
-  const hunch = new Hunch(hunchDataFactory.createObject());
-  await hunch.save();
-});
+const { generateHunch } = require('../../../helpers/api-integration/object-generators');
 
 describe('GET /hunches', () => {
 
-  const baseUrl = '/api/hunches';
-  const api = requester();
-
   context('Success', () => {
 
+    before(async () => {
+      await generateHunch();
+    });
+
     it('returns status 200', async () => {
-      const response = await api.get(baseUrl);
+      const response = await requester().get('/hunches');
       expect(response.status).to.eql(200);
     });
 
     it('returns header with `Link`, `X-Current-Page` and `X-Total-Pages`', async () => {
-      const response = await api.get(baseUrl);
+      const response = await requester().get('/hunches');
 
       expect(response.header.link).to.exist;
 
@@ -38,16 +30,9 @@ describe('GET /hunches', () => {
     });
 
     it('returns JSON array', async () => {
-      const response = await api.get(baseUrl);
+      const response = await requester().get('/hunches');
       expect(response.body).to.be.an('array');
     });
 
-    it('returns object with correct props', async () => {
-      const expectedProps = hunchDataFactory.getObjectProps();
-      const response = await api.get(baseUrl);
-      const sampleKeys = Object.keys(response.body[0]);
-
-      expectedProps.forEach(key => expect(sampleKeys).to.include(key));
-    });
   });
 });
