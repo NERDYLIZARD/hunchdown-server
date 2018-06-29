@@ -28,7 +28,7 @@ const mockgoose = new Mockgoose(mongoose);
 module.exports.connectDatabase = async function () {
   try {
     await mockgoose.prepareStorage();
-    await mongoose.connect('localhost:27017/hunchdown-test');
+    await mongoose.connect('mongodb://localhost:27017/test');
   } catch (e) {
     throw e;
   }

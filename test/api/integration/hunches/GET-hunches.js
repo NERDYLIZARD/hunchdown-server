@@ -3,14 +3,15 @@
  */
 require('../../../helpers/api-integration.helper');
 const requester = require('../../../helpers/api-integration/requester');
-const { generateHunch } = require('../../../helpers/api-integration/object-generators');
+const { generateHunch, generateBox } = require('../../../helpers/api-integration/object-generators');
 
 describe('GET /hunches', () => {
 
   before(async () => {
+    const box = await generateBox();
     const generateHunchPromises = [];
     for (let i = 1; i <= 12; ++i) {
-      generateHunchPromises.push(generateHunch());
+      generateHunchPromises.push(generateHunch([box]));
     }
     await Promise.all(generateHunchPromises);
   });

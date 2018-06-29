@@ -41,6 +41,14 @@ class ApiHunch extends ApiObject {
   }
 }
 
+class ApiBox extends ApiObject {
+  constructor (options) {
+    super(options);
+
+    this._docType = 'boxes';
+  }
+}
+
 function _updateLocalParameters (doc, update) {
   each(update, (value, param) => {
     set(doc, param, value);
@@ -48,5 +56,6 @@ function _updateLocalParameters (doc, update) {
 }
 
 module.exports = {
-  ApiHunch
+  ApiHunch,
+  ApiBox
 };
