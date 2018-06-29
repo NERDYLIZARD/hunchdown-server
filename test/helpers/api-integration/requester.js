@@ -32,12 +32,15 @@ function _requestMaker (method) {
             const parsedError = _parseError(err);
             return reject(parsedError);
           }
-          resolve(response);
+          resolve(_parseRes(response));
         });
     });
   };
 }
 
+function _parseRes (res) {
+  return res.body;
+}
 
 /**
  * parse error response to include http status so that we don't need to assert the status and body separately

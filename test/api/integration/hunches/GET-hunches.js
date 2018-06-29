@@ -7,32 +7,26 @@ const { generateHunch } = require('../../../helpers/api-integration/object-gener
 
 describe('GET /hunches', () => {
 
-  context('Success', () => {
-
-    before(async () => {
-      await generateHunch();
-    });
-
-    it('returns status 200', async () => {
-      const response = await requester().get('/hunches');
-      expect(response.status).to.eql(200);
-    });
-
-    it('returns header with `Link`, `X-Current-Page` and `X-Total-Pages`', async () => {
-      const response = await requester().get('/hunches');
-
-      expect(response.header.link).to.exist;
-
-      expect(response.header['x-current-page']).to.exist;
-      expect(response.header['x-current-page']).to.eql('1');
-
-      expect(response.header['x-total-pages']).to.exist;
-    });
-
-    it('returns JSON array', async () => {
-      const response = await requester().get('/hunches');
-      expect(response.body).to.be.an('array');
-    });
-
+  before(async () => {
+    const generateHunchPromises = [];
+    for (let i = 1; i <= 12; ++i) {
+      generateHunchPromises.push(generateHunch());
+    }
+    await Promise.all(generateHunchPromises);
   });
+
+  it('returns all hunches when request with no `pagination`', async () => {
+    const hunches = await requester().get('/hunches');
+    expect(hunches.length).to.eql(12);
+  });
+
+  it('returns a number of hunches according to `pagination` query', async () => {
+    const hunches = await requester().get('/hunches?page=2&perPage=5');
+    expect(hunches.length).to.eql(5);
+  });
+
+  it('returns hunches with embed properties according to `embeds` query');
+
+  it('returns hunches with only selected fields according to `fields` query');
+
 });
