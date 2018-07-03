@@ -28,12 +28,18 @@ function _requestMaker (method) {
         .query(query)
         .send(send)
         .end((err, response) => {
+
           if (err) {
-            const parsedError = _parseError(err);
-            return reject(parsedError);
+            return reject(err);
           }
+
+          if (!response.ok) {
+            return reject(_parseError(response));
+          }
+
           resolve(_parseRes(response));
         });
+
     });
   };
 }
@@ -58,5 +64,6 @@ function _parseError (err) {
 
   return parsedError;
 }
+
 
 module.exports = requester;

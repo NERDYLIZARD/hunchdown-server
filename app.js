@@ -103,7 +103,6 @@ if (isDevelopment) {
  * no stacktraces leaked to user
  */
 app.use((error, req, res, next) => {
-
   // error.status for a standard error
   // error.code for an error from @feather/error library
   res.status(error.status || error.code || 500);
