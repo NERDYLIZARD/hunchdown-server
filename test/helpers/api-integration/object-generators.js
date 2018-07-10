@@ -6,7 +6,9 @@ const { ApiHunch, ApiBox } = require('./api-classes');
 
 
 module.exports.generateHunch = async function generateHunch(boxes, details = {}) {
-  details.boxes = boxes.map(box => box.id);
+  details.boxes = Array.isArray(boxes) ?
+    boxes.map(box => box.id) :
+    [boxes.id];
   details.wisdom = details.wisdom || 'wisdom';
   details.attribute = details.attribute || 'attribute';
 

@@ -74,7 +74,7 @@ router.get('/:hunch', query.fields, query.embeds, async (req, res) => {
   }
   const hunch = await findHunch.exec();
 
-  if (!hunch) throw new errors.NotFound('The hunch is not found.');
+  if (!hunch) throw new errors.NotFound('hunchNotFound');
 
   res.status(200).json(hunch);
 });

@@ -18,12 +18,12 @@ describe('GET /hunches', () => {
 
   it('returns all hunches when request with no `pagination`', async () => {
     const hunches = await requester().get('/hunches');
-    expect(hunches.length).to.eql(12);
+    expect(hunches.length).to.equal(12);
   });
 
   it('returns a number of hunches according to `pagination` query', async () => {
     const hunches = await requester().get('/hunches?page=2&perPage=5');
-    expect(hunches.length).to.eql(5);
+    expect(hunches.length).to.equal(5);
   });
 
   it('returns hunches with embed properties according to `embeds` query');
