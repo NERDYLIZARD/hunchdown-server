@@ -18,7 +18,7 @@ describe('GET /hunches/hunchId', () => {
     });
   });
 
-  context('success', () => {
+  context('Success', () => {
     let box;
     let hunch;
     
