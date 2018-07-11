@@ -13,7 +13,6 @@ describe('GET /hunches/hunchId', () => {
 
     await expect(requester().get(`/hunches/${dummyId}`)).to.eventually.be.rejected.and.eql({
       status: 404,
-      code: 'NotFound',
       message: 'hunchNotFound'
     });
   });

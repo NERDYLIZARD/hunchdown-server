@@ -4,7 +4,7 @@
 const router = require('express').Router();
 const _ = require('lodash');
 const mongoose = require('mongoose');
-const errors = require('@feathersjs/errors');
+const { NotFound} = require('../../libs/errors');
 const { getPaginationUrl } = require('../../utils/url');
 const urls = require('../../constants/urls');
 const query = require('../../middlewares/query');
@@ -74,7 +74,7 @@ router.get('/:hunch', query.fields, query.embeds, async (req, res) => {
   }
   const hunch = await findHunch.exec();
 
-  if (!hunch) throw new errors.NotFound('hunchNotFound');
+  if (!hunch) throw new NotFound('hunchNotFound');
 
   res.status(200).json(hunch);
 });
@@ -112,7 +112,7 @@ router.patch('/:hunch', async (req, res) => {
 
   let hunch = await Hunch.findById(id);
 
-  if (!hunch) throw new errors.NotFound('The hunch is not found.');
+  if (!hunch) throw new NotFound('The hunch is not found.');
 
   if (typeof wisdom !== 'undefined') {
     hunch.wisdom = wisdom;
@@ -167,7 +167,7 @@ router.delete('/:hunch', async (req, res) => {
   const id = req.params.hunch;
   const hunch = await Hunch.findById(id);
 
-  if (!hunch) throw new errors.NotFound('The hunch is not found.');
+  if (!hunch) throw new NotFound('The hunch is not found.');
 
   await hunch.remove();
   res.sendStatus(204);
@@ -179,7 +179,7 @@ router.get('/:hunch/boxes', async (req, res) => {
   const boxes = await Box.find({ hunches: hunchId });
 
   if (!boxes.length)
-    throw new errors.NotFound('The boxes are not found.');
+    throw new NotFound('The boxes are not found.');
 
   res.status(200).json(boxes);
 });

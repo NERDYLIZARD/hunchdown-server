@@ -55,7 +55,6 @@ function _parseError (err) {
 
   const parsedError = {
     status: err.status,
-    code: err.body.code,
     message: err.body.message,
   };
   if (err.body.errors) {

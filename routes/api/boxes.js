@@ -3,7 +3,7 @@
  */
 const router = require('express').Router();
 const mongoose = require('mongoose');
-const errors = require('@feathersjs/errors');
+const { NotFound} = require('../../libs/errors');
 const { getFullUrl, getPaginationUrl } = require('../../utils/url');
 const query = require('../../middlewares/query');
 
@@ -72,7 +72,7 @@ router.get('/:box', query.fields, query.embeds, async (req, res) => {
   }
   const box = await findBox.exec();
 
-  if (!box) throw new errors.NotFound('The box is not found.');
+  if (!box) throw new NotFound('The box is not found.');
 
   res.status(200).json(box);
 });
@@ -99,7 +99,7 @@ router.patch('/:box', async (req, res) => {
 
   let box = await Box.findById(id);
 
-  if (!box) throw new errors.NotFound('The box is not found.');
+  if (!box) throw new NotFound('The box is not found.');
 
   if (typeof title !== 'undefined')
     box.title = title;
@@ -117,7 +117,7 @@ router.get('/:box/hunches', async (req, res) => {
   const hunches = await Hunch.find({ boxes: boxId });
 
   if (!hunches.length)
-    throw new errors.NotFound('The hunches are not found.');
+    throw new NotFound('The hunches are not found.');
 
   res.status(200).json(hunches);
 });
@@ -130,7 +130,7 @@ router.get('/:box/hunches', async (req, res) => {
 router.patch('/:box/hunches', async (req, res) => {
   const id = req.params.box;
   let box = await Box.findById(id);
-  if(!box) throw new errors.NotFound('The box is not found.');
+  if(!box) throw new NotFound('The box is not found.');
 
   const hunchIds = req.body.hunches;
   const hunches = await Hunch.find({ _id: { $in: hunchIds }});
@@ -153,7 +153,7 @@ router.delete('/:box', async (req, res) => {
   const id = req.params.box;
   const box = await Box.findById(id);
 
-  if (!box) throw new errors.NotFound('The box is not found.');
+  if (!box) throw new NotFound('The box is not found.');
 
   await box.remove();
   res.sendStatus(204);

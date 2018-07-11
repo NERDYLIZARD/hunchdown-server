@@ -15,14 +15,11 @@ describe('POST /hunches', () => {
           attribute: 'attribute',
         })).to.eventually.be.rejected.and.eql({
         status: 422,
-        code: 'ValidationError',
-        message: 'Hunch validation failed: wisdom: wisdom is required',
+        message: 'Hunch validation failed',
         errors: [
           {
-            code: "required",
             field: "wisdom",
             message: "wisdom is required",
-            resource: ""
           }
         ]
       });
