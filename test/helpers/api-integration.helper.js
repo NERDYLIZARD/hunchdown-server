@@ -14,3 +14,5 @@ after((done) => {
     .then(() => done())
     .catch(done);
 });
+
+module.exports = require('./api-integration');

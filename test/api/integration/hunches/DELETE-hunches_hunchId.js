@@ -1,8 +1,7 @@
 /**
  * Created on 25-Jun-18.
  */
-require('../../../helpers/api-integration.helper');
-const { checkExistence } = require('../../../helpers/mongo');
+const { checkExistence } = require('../../../helpers/api-integration.helper');
 const { Types: { ObjectId }} = require('mongoose');
 const requester = require('../../../helpers/api-integration/requester');
 const { generateHunch, generateBox } = require('../../../helpers/api-integration/object-generators');

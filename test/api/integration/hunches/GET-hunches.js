@@ -1,9 +1,7 @@
 /**
  * Created on 25-Jun-18.
  */
-require('../../../helpers/api-integration.helper');
-const requester = require('../../../helpers/api-integration/requester');
-const { generateHunch, generateBox } = require('../../../helpers/api-integration/object-generators');
+const { generateHunch, generateBox, requester } = require('../../../helpers/api-integration.helper');
 
 describe('GET /hunches', () => {
 

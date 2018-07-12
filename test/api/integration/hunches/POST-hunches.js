@@ -1,9 +1,7 @@
 /**
  * Created on 25-Jun-18.
  */
-require('../../../helpers/api-integration.helper');
-const requester = require('../../../helpers/api-integration/requester');
-const {generateBox} = require('../../../helpers/api-integration/object-generators');
+const { generateBox, requester } = require('../../../helpers/api-integration.helper');
 
 describe('POST /hunches', () => {
 
