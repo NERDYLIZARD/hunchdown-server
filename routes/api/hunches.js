@@ -53,8 +53,8 @@ router.get('/', query.fields, query.embeds, async (req, res) => {
   res.status(200).json(hunches);
 });
 
-router.get('/:hunch', query.fields, query.embeds, async (req, res) => {
-  const id = req.params.hunch;
+router.get('/:hunchId', query.fields, query.embeds, async (req, res) => {
+  const id = req.params.hunchId;
 
   let findHunch = Hunch.findById(id);
 
@@ -111,10 +111,10 @@ router.post('/', async (req, res) => {
 });
 
 
-router.patch('/:hunch', async (req, res) => {
+router.patch('/:hunchId', async (req, res) => {
 
   const { wisdom, attribute } = req.body;
-  const id = req.params.hunch;
+  const id = req.params.hunchId;
 
   let hunch = await Hunch.findById(id);
 
@@ -169,19 +169,19 @@ router.patch('/:hunch', async (req, res) => {
 });
 
 
-router.delete('/:hunch', async (req, res) => {
-  const id = req.params.hunch;
+router.delete('/:hunchId', async (req, res) => {
+  const id = req.params.hunchId;
   const hunch = await Hunch.findById(id);
 
-  if (!hunch) throw new NotFound('The hunch is not found.');
+  if (!hunch) throw new NotFound('hunchNotFound');
 
   await hunch.remove();
   res.sendStatus(204);
 });
 
 
-router.get('/:hunch/boxes', async (req, res) => {
-  const hunchId = req.params.hunch;
+router.get('/:hunchId/boxes', async (req, res) => {
+  const hunchId = req.params.hunchId;
   const boxes = await Box.find({ hunches: hunchId });
 
   if (!boxes.length)

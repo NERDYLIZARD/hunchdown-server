@@ -47,8 +47,25 @@ module.exports.disconnectDatabase = async function () {
 };
 
 
+// Useful for checking things that have been deleted,
+// but you no longer have access to
+module.exports.checkExistence = async function (collectionName, id) {
+  return new Promise((resolve, reject) => {
+    const collection = mongoose.connection.db.collection(collectionName);
+
+    collection.find({_id: id}, {_id: 1}).limit(1).toArray((findError, docs) => {
+      if (findError) return reject(findError);
+
+      const exists = docs.length > 0;
+
+      resolve(exists);
+    });
+  });
+};
+
+
 module.exports.updateDocument = async function (collectionName, doc, update) {
-  let collection = mongoose.connection.db.collection(collectionName);
+  const collection = mongoose.connection.db.collection(collectionName);
 
   return new Promise((resolve) => {
     collection.updateOne({ _id: doc._id }, { $set: update }, (updateErr) => {
@@ -59,7 +76,7 @@ module.exports.updateDocument = async function (collectionName, doc, update) {
 };
 
 module.exports.getDocument = async function (collectionName, doc) {
-  let collection = mongoose.connection.db.collection(collectionName);
+  const collection = mongoose.connection.db.collection(collectionName);
 
   return new Promise((resolve) => {
     collection.findOne({ _id: doc._id }, (lookupErr, found) => {
