@@ -3,23 +3,27 @@
  */
 require('../../../helpers/api-integration.helper');
 const requester = require('../../../helpers/api-integration/requester');
-const { generateBox } = require('../../../helpers/api-integration/object-generators');
+const {generateBox} = require('../../../helpers/api-integration/object-generators');
 
 describe('POST /hunches', () => {
 
   context('Validation Error', () => {
 
-    it('requires `wisdom`', async () => {
+    it('requires `wisdom` and `boxes`', async () => {
       await expect(
         requester().post('/hunches', {
           attribute: 'attribute',
         })).to.eventually.be.rejected.and.eql({
         status: 422,
-        message: 'Hunch validation failed',
+        message: 'invalidRequestParams',
         errors: [
           {
             field: "wisdom",
-            message: "wisdom is required",
+            message: "missingWisdom",
+          },
+          {
+            field: "boxes",
+            message: "missingBox",
           }
         ]
       });

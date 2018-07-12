@@ -81,13 +81,19 @@ router.get('/:hunch', query.fields, query.embeds, async (req, res) => {
 
 
 router.post('/', async (req, res) => {
+
+  req.checkBody('wisdom').notEmpty().withMessage('missingWisdom');
+  req.checkBody('boxes').notEmpty().withMessage('missingBox');
+
+  const validationErrors = req.validationErrors();
+  if (validationErrors) throw validationErrors;
+
   const { wisdom, attribute } = req.body;
   let hunch = new Hunch({
     wisdom,
     attribute
   });
 
-  // TODO add constraint: a box is required to create hunch,
   // many-many relationship
   const boxes = await Box.find({ _id: { $in: req.body.boxes } });
   await Promise.all(boxes.map(box => {

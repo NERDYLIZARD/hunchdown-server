@@ -7,7 +7,8 @@ const session = require('express-session');
 const cors = require('cors');
 const passport = require('passport');
 const errorHandler = require('./middlewares/error-handler');
-const { NotFound } = require('./libs/errors');
+const expressValidator = require('express-validator');
+const {NotFound} = require('./libs/errors');
 // importing variables in .env file into a global object process.env
 require('dotenv').config();
 const keys = require('./config');
@@ -26,13 +27,20 @@ app.use(cors());
  */
 if (isDevelopment)
   app.use(logger('dev'));
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
+
+app.use(expressValidator());
 
 app.use(methodOverride());
 app.use(express.static(__dirname + '/public'));
 
-app.use(session({ secret: keys.sessionKey, cookie: { maxAge: 60000 }, resave: false, saveUninitialized: false }));
+app.use(session({
+  secret: keys.sessionKey,
+  cookie: {maxAge: 60000},
+  resave: false,
+  saveUninitialized: false
+}));
 
 
 /**

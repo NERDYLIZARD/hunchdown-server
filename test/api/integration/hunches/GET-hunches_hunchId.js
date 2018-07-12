@@ -2,14 +2,14 @@
  * Created on 25-Jun-18.
  */
 require('../../../helpers/api-integration.helper');
-const mongoose = require('mongoose');
+const { Types: { ObjectId }} = require('mongoose');
 const requester = require('../../../helpers/api-integration/requester');
 const { generateHunch, generateBox } = require('../../../helpers/api-integration/object-generators');
 
 describe('GET /hunches/hunchId', () => {
 
   it('cannot get a non-existent hunch', async () => {
-    const dummyId = mongoose.Types.ObjectId();
+    const dummyId = ObjectId();
 
     await expect(requester().get(`/hunches/${dummyId}`)).to.eventually.be.rejected.and.eql({
       status: 404,

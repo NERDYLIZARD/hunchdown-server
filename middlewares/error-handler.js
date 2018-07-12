@@ -22,16 +22,16 @@ module.exports = function errorHandler (err, req, res, next) { // eslint-disable
   }
 
   // Handle errors by express-validator
-  // if (Array.isArray(err) && err[0].param && err[0].msg) {
-  //   responseErr = new UnprocessableEntity(res.t('invalidReqParams'));
-  //   responseErr.errors = err.map((paramErr) => {
-  //     return {
-  //       message: paramErr.msg,
-  //       field: paramErr.param,
-  //       value: paramErr.value,
-  //     };
-  //   });
-  // }
+  if (Array.isArray(err) && err[0].param && err[0].msg) {
+    responseErr = new UnprocessableEntity('invalidRequestParams');
+    responseErr.errors = err.map((paramErr) => {
+      return {
+        message: paramErr.msg,
+        field: paramErr.param,
+        value: paramErr.value,
+      };
+    });
+  }
 
   // Handle mongoose validation errors
   if (err.name === 'ValidationError') {
