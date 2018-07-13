@@ -79,6 +79,11 @@ router.get('/:box', query.fields, query.embeds, async (req, res) => {
 
 
 router.post('/', async (req, res) => {
+
+  req.checkBody('title').notEmpty().withMessage('missingTitle');
+  const validationErrors = req.validationErrors();
+  if (validationErrors) throw validationErrors;
+
   const { title, description } = req.body;
   let box = new Box({
     title,
