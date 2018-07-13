@@ -72,7 +72,7 @@ router.get('/:box', query.fields, query.embeds, async (req, res) => {
   }
   const box = await findBox.exec();
 
-  if (!box) throw new NotFound('The box is not found.');
+  if (!box) throw new NotFound('boxNotFound');
 
   res.status(200).json(box);
 });
