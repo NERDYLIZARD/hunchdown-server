@@ -1,5 +1,5 @@
 /**
- * Created on 25-Jun-18.
+ * Created on 12-Jul-18.
  */
 const { generateBox, requester } = require('../../../helpers/api-integration.helper');
 

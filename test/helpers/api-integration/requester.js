@@ -10,6 +10,7 @@ function requester () {
     get: _requestMaker('get'),
     post: _requestMaker('post'),
     put: _requestMaker('put'),
+    patch: _requestMaker('patch'),
     del: _requestMaker('del'),
   };
 }

@@ -4,8 +4,8 @@
 const router = require('express').Router();
 const _ = require('lodash');
 const mongoose = require('mongoose');
-const { NotFound} = require('../../libs/errors');
-const { getPaginationUrl } = require('../../utils/url');
+const {NotFound} = require('../../libs/errors');
+const {getPaginationUrl} = require('../../utils/url');
 const urls = require('../../constants/urls');
 const query = require('../../middlewares/query');
 
@@ -88,14 +88,14 @@ router.post('/', async (req, res) => {
   const validationErrors = req.validationErrors();
   if (validationErrors) throw validationErrors;
 
-  const { wisdom, attribute } = req.body;
+  const {wisdom, attribute} = req.body;
   let hunch = new Hunch({
     wisdom,
     attribute
   });
 
   // many-many relationship
-  const boxes = await Box.find({ _id: { $in: req.body.boxes } });
+  const boxes = await Box.find({_id: {$in: req.body.boxes}});
   await Promise.all(boxes.map(box => {
     hunch.boxes.push(box);
     box.hunches.push(hunch);
@@ -113,12 +113,11 @@ router.post('/', async (req, res) => {
 
 router.patch('/:hunchId', async (req, res) => {
 
-  const { wisdom, attribute } = req.body;
   const id = req.params.hunchId;
-
   let hunch = await Hunch.findById(id);
+  if (!hunch) throw new NotFound('hunchNotFound');
 
-  if (!hunch) throw new NotFound('The hunch is not found.');
+  const {wisdom, attribute} = req.body;
 
   if (typeof wisdom !== 'undefined') {
     hunch.wisdom = wisdom;
@@ -130,7 +129,7 @@ router.patch('/:hunchId', async (req, res) => {
 
   if (typeof req.body.boxes !== 'undefined') {
 
-    const boxes = await Box.find({ hunches: hunch });
+    const boxes = await Box.find({hunches: hunch});
 
     // `id` returns stringified value of `_id`
     const currentBoxIds = boxes.map(box => box.id);
@@ -139,22 +138,19 @@ router.patch('/:hunchId', async (req, res) => {
     const removingBoxIds = _.difference(currentBoxIds, newBoxIds);
     const insertingBoxIds = _.difference(newBoxIds, currentBoxIds);
 
-    const [removingBoxes, insertingBoxes] = await Promise.all([
-      Box.find({ _id: { $in: removingBoxIds } }),
-      Box.find({ _id: { $in: insertingBoxIds } })
-    ]);
-
     // TODO: modularize many-many relationship both add(push) and remove(pull) e.g. function many(hunch, boxes) { ... }
     // many-many relationship
     const saveBoxes = [];
-    if (removingBoxes) {
+    if (removingBoxIds) {
+      const removingBoxes = await Box.find({_id: {$in: removingBoxIds}});
       removingBoxes.forEach(removingBox => {
         hunch.boxes.pull(removingBox);
         removingBox.hunches.pull(hunch);
         saveBoxes.push(removingBox.save());
       });
     }
-    if (insertingBoxes) {
+    if (insertingBoxIds) {
+      const insertingBoxes = await Box.find({_id: {$in: insertingBoxIds}});
       insertingBoxes.forEach(insertingBox => {
         hunch.boxes.push(insertingBox);
         insertingBox.hunches.push(hunch);
@@ -182,7 +178,7 @@ router.delete('/:hunchId', async (req, res) => {
 
 router.get('/:hunchId/boxes', async (req, res) => {
   const hunchId = req.params.hunchId;
-  const boxes = await Box.find({ hunches: hunchId });
+  const boxes = await Box.find({hunches: hunchId});
 
   if (!boxes.length)
     throw new NotFound('The boxes are not found.');
