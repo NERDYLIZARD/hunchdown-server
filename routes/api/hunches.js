@@ -181,7 +181,7 @@ router.get('/:hunchId/boxes', async (req, res) => {
   const boxes = await Box.find({hunches: hunchId});
 
   if (!boxes.length)
-    throw new NotFound('The boxes are not found.');
+    throw new NotFound('boxNotFound');
 
   res.status(200).json(boxes);
 });
