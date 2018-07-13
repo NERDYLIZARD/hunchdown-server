@@ -104,7 +104,7 @@ router.patch('/:box', async (req, res) => {
 
   let box = await Box.findById(id);
 
-  if (!box) throw new NotFound('The box is not found.');
+  if (!box) throw new NotFound('boxNotFound');
 
   if (typeof title !== 'undefined')
     box.title = title;
