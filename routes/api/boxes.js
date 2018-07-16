@@ -122,7 +122,7 @@ router.get('/:box/hunches', async (req, res) => {
   const hunches = await Hunch.find({ boxes: boxId });
 
   if (!hunches.length)
-    throw new NotFound('emptyBox');
+    throw new NotFound('noHunchInBox');
 
   res.status(200).json(hunches);
 });
@@ -158,7 +158,7 @@ router.delete('/:box', async (req, res) => {
   const id = req.params.box;
   const box = await Box.findById(id);
 
-  if (!box) throw new NotFound('The box is not found.');
+  if (!box) throw new NotFound('boxNotFound');
 
   await box.remove();
   res.sendStatus(204);
