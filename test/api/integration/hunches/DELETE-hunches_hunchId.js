@@ -24,12 +24,18 @@ describe('DELETE /hunches/hunchId', () => {
     beforeEach(async () => {
       box = await generateBox();
       hunch = await generateHunch(box);
-      await hunch.sync();
+      await box.sync();
     });
 
     it('deletes a hunch', async () => {
+      expect(box.hunches).to.includes(hunch.id);
+      await expect(checkExistence('Hunch', hunch.id)).to.eventually.equal(true);
+
       await requester().del(`/hunches/${hunch.id}`);
-      await expect(checkExistence('hunches', hunch.id)).to.eventually.equal(false);
+      await box.sync();
+
+      await expect(checkExistence('Hunch', hunch.id)).to.eventually.equal(false);
+      expect(box.hunches).to.not.includes(hunch.id);
     });
 
   });

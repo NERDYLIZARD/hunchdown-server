@@ -46,14 +46,11 @@ module.exports.disconnectDatabase = async function () {
   }
 };
 
-
 // Useful for checking things that have been deleted,
 // but you no longer have access to
-module.exports.checkExistence = async function (collectionName, id) {
+module.exports.checkExistence = async function (modelName, id) {
   return new Promise((resolve, reject) => {
-    const collection = mongoose.connection.db.collection(collectionName);
-
-    collection.find({_id: id}, {_id: 1}).limit(1).toArray((findError, docs) => {
+    mongoose.model(modelName).find({_id: id}, {_id: 1}).limit(1).exec((findError, docs) => {
       if (findError) return reject(findError);
 
       const exists = docs.length > 0;
@@ -63,25 +60,20 @@ module.exports.checkExistence = async function (collectionName, id) {
   });
 };
 
-
-module.exports.updateDocument = async function (collectionName, doc, update) {
-  const collection = mongoose.connection.db.collection(collectionName);
-
+module.exports.updateDocument = async function (modelName, doc, update) {
   return new Promise((resolve) => {
-    collection.updateOne({ _id: doc._id }, { $set: update }, (updateErr) => {
-      if (updateErr) throw new Error(`Error updating ${collectionName}: ${updateErr}`);
+    mongoose.model(modelName).updateOne({_id: doc.id}, {$set: update}, (updateErr) => {
+      if (updateErr) throw new Error(`Error updating ${modelName}: ${updateErr}`);
       resolve();
     });
   });
 };
 
-module.exports.getDocument = async function (collectionName, doc) {
-  const collection = mongoose.connection.db.collection(collectionName);
-
+module.exports.getDocument = async function (modelName, doc) {
   return new Promise((resolve) => {
-    collection.findOne({ _id: doc._id }, (lookupErr, found) => {
-      if (lookupErr) throw new Error(`Error looking up ${collectionName}: ${lookupErr}`);
-      resolve(found);
+    mongoose.model(modelName).findOne({_id: doc.id}, (lookupErr, found) => {
+      if (lookupErr) throw new Error(`Error looking up ${modelName}: ${lookupErr}`);
+      resolve(found._doc);
     });
   });
 };

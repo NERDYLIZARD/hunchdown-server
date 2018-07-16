@@ -15,7 +15,7 @@ describe('GET /hunches/hunchId', () => {
     });
   });
 
-  context('Success', () => {
+  context('Getting a hunch', () => {
     let box;
     let hunch;
     
@@ -25,7 +25,6 @@ describe('GET /hunches/hunchId', () => {
     });
 
     it('returns hunch data', async () => {
-      await hunch.sync();
       const _hunch = await requester().get(`/hunches/${hunch.id}`);
 
       expect(_hunch.id).to.equal(hunch.id);
