@@ -119,10 +119,11 @@ router.patch('/:box', async (req, res) => {
 
 router.get('/:box/hunches', async (req, res) => {
   const boxId = req.params.box;
-  const hunches = await Hunch.find({ boxes: boxId });
 
-  if (!hunches.length)
-    throw new NotFound('noHunchInBox');
+  const box = await Box.findById(boxId);
+  if (!box) throw new NotFound('boxNotFound');
+
+  const hunches = await Hunch.find({ boxes: boxId });
 
   res.status(200).json(hunches);
 });
