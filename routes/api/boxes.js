@@ -3,8 +3,9 @@
  */
 const router = require('express').Router();
 const mongoose = require('mongoose');
-const { NotFound} = require('../../libs/errors');
-const { getFullUrl, getPaginationUrl } = require('../../utils/url');
+const _ = require('lodash');
+const {NotFound} = require('../../libs/errors');
+const {getFullUrl, getPaginationUrl} = require('../../utils/url');
 const query = require('../../middlewares/query');
 
 const Box = mongoose.model('Box');
@@ -51,8 +52,8 @@ router.get('/', query.fields, query.embeds, async (req, res) => {
 });
 
 
-router.get('/:box', query.fields, query.embeds, async (req, res) => {
-  const id = req.params.box;
+router.get('/:boxId', query.fields, query.embeds, async (req, res) => {
+  const id = req.params.boxId;
 
   let findBox = Box.findById(id);
 
@@ -84,7 +85,7 @@ router.post('/', async (req, res) => {
   const validationErrors = req.validationErrors();
   if (validationErrors) throw validationErrors;
 
-  const { title, description } = req.body;
+  const {title, description} = req.body;
   let box = new Box({
     title,
     description,
@@ -98,9 +99,9 @@ router.post('/', async (req, res) => {
 });
 
 
-router.patch('/:box', async (req, res) => {
-  const { title, description } = req.body;
-  const id = req.params.box;
+router.patch('/:boxId', async (req, res) => {
+  const {title, description} = req.body;
+  const id = req.params.boxId;
 
   let box = await Box.findById(id);
 
@@ -117,13 +118,13 @@ router.patch('/:box', async (req, res) => {
 });
 
 
-router.get('/:box/hunches', async (req, res) => {
-  const boxId = req.params.box;
+router.get('/:boxId/hunches', async (req, res) => {
+  const boxId = req.params.boxId;
 
   const box = await Box.findById(boxId);
   if (!box) throw new NotFound('boxNotFound');
 
-  const hunches = await Hunch.find({ boxes: boxId });
+  const hunches = await Hunch.find({boxes: boxId});
 
   res.status(200).json(hunches);
 });
@@ -133,16 +134,26 @@ router.get('/:box/hunches', async (req, res) => {
  * Add hunches into the box.
  * input string[] req.body.hunches (array of hunch's ids)
  */
-router.patch('/:box/hunches', async (req, res) => {
-  const id = req.params.box;
-  let box = await Box.findById(id);
-  if(!box) throw new NotFound('The box is not found.');
+router.post('/:boxId/hunches', async (req, res) => {
+  const boxId = req.params.boxId;
+  let box = await Box.findById(boxId);
+  if (!box) throw new NotFound('boxNotFound');
 
   const hunchIds = req.body.hunches;
-  const hunches = await Hunch.find({ _id: { $in: hunchIds }});
+
+  const inputHunches = await Hunch.find({_id: {$in: hunchIds}});
+
+  // add only hunches that are not already in the box
+  const insertingHunches = [];
+  inputHunches.forEach(hunch => {
+    const hunchIsAlreadyInBox = _.some(hunch.boxes, box._id);
+    if (!hunchIsAlreadyInBox) {
+      insertingHunches.push(hunch);
+    }
+  });
 
   const saveHunches = [];
-  hunches.forEach(hunch => {
+  insertingHunches.forEach(hunch => {
     hunch.boxes.push(box);
     box.hunches.push(hunch);
     saveHunches.push(hunch.save());
@@ -151,12 +162,14 @@ router.patch('/:box/hunches', async (req, res) => {
   await Promise.all(saveHunches);
   box = await box.save();
 
+  // return only the hunches that just have been inserted
+  box.hunches = insertingHunches;
   res.status(200).json(box);
 });
 
 
-router.delete('/:box', async (req, res) => {
-  const id = req.params.box;
+router.delete('/:boxId', async (req, res) => {
+  const id = req.params.boxId;
   const box = await Box.findById(id);
 
   if (!box) throw new NotFound('boxNotFound');
