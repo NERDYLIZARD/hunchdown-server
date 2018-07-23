@@ -4,7 +4,7 @@
 const slug = require('slug');
 const urls = require('../constants/urls');
 const mongoose = require('mongoose');
-const omitArticles = require('../utils/omit-articles');
+const omitArticles = require('../libs/omit-articles');
 
 const SLUG_MAX_LENGTH = 100;
 

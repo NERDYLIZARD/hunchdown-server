@@ -5,7 +5,7 @@ const router = require('express').Router();
 const mongoose = require('mongoose');
 const _ = require('lodash');
 const {NotFound} = require('../../libs/errors');
-const {getFullUrl, getPaginationUrl} = require('../../utils/url');
+const {getFullUrl, getPaginationUrl} = require('../../libs/url');
 const query = require('../../middlewares/query');
 
 const Box = mongoose.model('Box');

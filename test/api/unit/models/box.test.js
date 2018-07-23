@@ -1,7 +1,7 @@
 /**
  * Created on 29-May-18.
  */
-const Box = require('./box');
+const Box = require('../../../../models/box');
 const BoxDataFactory = require('../utils/test/data-factories/BoxDataFactory');
 
 const boxDataFactory = new BoxDataFactory();

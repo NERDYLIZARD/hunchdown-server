@@ -3,15 +3,15 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "setup": "npm install && node ./tools/createEnvironmentFile.js",
+    "setup": "npm install && node ./tools/create-environment-file.js",
     "mongo": "mongod",
     "prod": "node ./bin/www",
     "dev": "nodemon ./bin/www",
     "start": "npm run dev",
-    "test": "cross-env NODE_ENV=test jest",
-    "test:watch": "npm run test -- --watch",
-    "mocha": "cross-env NODE_ENV=test mocha test/api/integration --recursive",
-    "mocha:watch": "npm run mocha -- --watch"
+    "test:api:unit": "cross-env NODE_ENV=test mocha test/api/unit --recursive",
+    "test:api:unit:watch": "npm run test:api:unit -- --watch",
+    "test:api:integration": "cross-env NODE_ENV=test mocha test/api/integration --recursive",
+    "test:api:integration:watch": "npm run test:api:integration -- --watch"
   },
   "dependencies": {
     "@feathersjs/errors": "^3.3.0",

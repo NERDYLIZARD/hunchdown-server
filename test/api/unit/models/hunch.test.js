@@ -1,7 +1,7 @@
 /**
  * Created on 08-May-18.
  */
-const Hunch = require('./hunch');
+const Hunch = require('../../../../models/hunch');
 const HunchDataFactory = require('../utils/test/data-factories/HunchDataFactory');
 
 const hunchDataFactory = new HunchDataFactory();
@@ -71,10 +71,10 @@ describe('Hunch Model', () => {
         it('calls `omitArticles()` and `slug()`', () => {
           jest.resetModules();
 
-          const omitArticles = require('../utils/omit-articles');
+          const omitArticles = require('../../../../libs/omit-articles');
           const slug = require('slug');
 
-          const Hunch = require('./hunch');
+          const Hunch = require('../../../../models/hunch');
           const hunch = new Hunch(hunchDataFactory.createObject());
 
           hunch.slugify();
@@ -88,10 +88,10 @@ describe('Hunch Model', () => {
         it('returns immediately', () => {
           jest.resetModules();
 
-          const omitArticles = require('../utils/omit-articles');
+          const omitArticles = require('../../../../libs/omit-articles');
           const slug = require('slug');
 
-          const Hunch = require('./hunch');
+          const Hunch = require('../../../../models/hunch');
           const hunch = new Hunch(hunchDataFactory.createObjectWithOut('wisdom'));
 
           hunch.slugify();
