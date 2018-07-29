@@ -178,10 +178,11 @@ router.delete('/:hunchId', async (req, res) => {
 
 router.get('/:hunchId/boxes', async (req, res) => {
   const hunchId = req.params.hunchId;
-  const boxes = await Box.find({hunches: hunchId});
 
-  if (!boxes.length)
-    throw new NotFound('boxNotFound');
+  const hunch = await Hunch.findById(hunchId);
+  if (!hunch) throw new NotFound('hunchNotFound');
+
+  const boxes = await Box.find({hunches: hunchId});
 
   res.status(200).json(boxes);
 });

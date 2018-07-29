@@ -11,7 +11,7 @@ describe('GET /hunches/hunchId/boxes', () => {
 
     await expect(requester().get(`/hunches/${dummyId}/boxes`)).to.eventually.be.rejected.and.eql({
       status: 404,
-      message: 'boxNotFound'
+      message: 'hunchNotFound'
     });
   });
 
